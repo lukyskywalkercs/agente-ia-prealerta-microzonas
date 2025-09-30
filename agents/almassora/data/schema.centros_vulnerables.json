@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "nombre", "lat", "lon"],
+    "properties": {
+      "id": { "type": "string" },
+      "nombre": { "type": "string" },
+      "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+      "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+      "tipo": { "type": "string" },
+      "direccion": { "type": "string" }
+    },
+    "additionalProperties": false
+  }
+}
+

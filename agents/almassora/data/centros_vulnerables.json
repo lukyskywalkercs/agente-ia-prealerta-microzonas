@@ -1,0 +1,228 @@
+[
+  {
+    "code": "12000212",
+    "nombre": "CEIP RIU MILLARS",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Carrer SANTÍSSIM CRIST, 71",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738315",
+    "coordenadas": {
+      "lat": 39.9492187,
+      "lon": -0.0654496
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12000224",
+    "nombre": "CEIP BOQUERES",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Carrer CONSTITUCIÓ ESPANYOLA, 52",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738320",
+    "coordenadas": {
+      "lat": 39.9490667,
+      "lon": -0.060277
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12000236",
+    "nombre": "CEIP CARDENAL CISNEROS",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Avinguda L'ESTRET, 1",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738325",
+    "coordenadas": {
+      "lat": 39.9432483,
+      "lon": -0.0660866
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12000251",
+    "nombre": "IES ÁLVARO FALOMIR",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Carrer BOQUERAS, 239",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738925",
+    "coordenadas": {
+      "lat": 39.9554628,
+      "lon": -0.0581962
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12000261",
+    "nombre": "EI 1er CICLE SAN JOSÉ",
+    "tipo": "otro",
+    "titularidad": "Públic",
+    "direccion": "Carrer SAN FELIPE, 10",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738330",
+    "coordenadas": {
+      "lat": 39.9477323,
+      "lon": -0.0641839
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12003729",
+    "nombre": "CENTRE PRIVAT FP CERVANTES",
+    "tipo": "educativo",
+    "titularidad": "Privat concertat",
+    "direccion": "Plaça MAYOR, 9",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964560847",
+    "coordenadas": {
+      "lat": 39.9416577,
+      "lon": -0.0620042
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12005647",
+    "nombre": "IES VILA-ROJA",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Avinguda GENERALITAT, 22",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738945",
+    "coordenadas": {
+      "lat": 39.9447967,
+      "lon": -0.0577549
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12006810",
+    "nombre": "CEIP REGINA VIOLANT",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Carrer SANT ILDEFONS, 55",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738865",
+    "coordenadas": {
+      "lat": 39.9482294,
+      "lon": -0.0610407
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12007516",
+    "nombre": "CEIP SANTA QUITERIA",
+    "tipo": "educativo",
+    "titularidad": "Públic",
+    "direccion": "Carrer DERECHOS HUMANOS, 5",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964738885",
+    "coordenadas": {
+      "lat": 39.9543481,
+      "lon": -0.0656208
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12007851",
+    "nombre": "CENTRE PRIV. ED. INF. 1er CICLE LA LLIMETA",
+    "tipo": "otro",
+    "titularidad": "Privat no concertat",
+    "direccion": "Carrer SAN JAIME, 119",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "964740207",
+    "coordenadas": {
+      "lat": 39.9429101,
+      "lon": -0.0646469
+    },
+    "fuente": "nominatim-autogeo"
+  },
+  {
+    "code": "12345679",
+    "nombre": "Residencia municipal de 3ª edad Almassora",
+    "tipo": "asistencial",
+    "titularidad": "Públic",
+    "direccion": "Avda de la Generalitat 20",
+    "municipio": "ALMASSORA",
+    "cp": "12550",
+    "telefono": "000000000",
+    "coordenadas": {
+      "lat": 39.9456061,
+      "lon": -0.0579876
+    },
+    "fuente": "nominatim-autogeo"
+  }
+  ,
+    {
+      "code": "12004369",
+      "nombre": "CEIP GERMANS OCHANDO",
+      "tipo": "educativo",
+      "titularidad": "Públic",
+      "direccion": "Carrer ACEQUIA PARRA, 20",
+      "municipio": "ALMASSORA",
+      "cp": "12550",
+      "telefono": "964738790",
+      "coordenadas": {
+        "lat": 39.944308,
+        "lon": -0.059630
+      },
+      "fuente": "manual-googlemaps"
+    },
+    {
+      "code": "12006007",
+      "nombre": "ESCOLA PRIVADA DE MÚSICA I DANSA MESTRE AGUT MANRIQUE",
+      "tipo": "educativo",
+      "titularidad": "Privat no concertat",
+      "direccion": "Carrer ESTRET, 1",
+      "municipio": "ALMASSORA",
+      "cp": "12550",
+      "telefono": "964563273",
+      "coordenadas": {
+        "lat": 39.9431015,
+        "lon": -0.0659706
+      },
+      "fuente": "manual-googlemaps"
+    },
+    {
+      "code": "12007966",
+      "nombre": "CENTRE PRIV. ED. INF. 1er CICLE EL BRES",
+      "tipo": "educativo",
+      "titularidad": "Privat no concertat",
+      "direccion": "Carrer JESÚS Y MARÍA, 12",
+      "municipio": "ALMASSORA",
+      "cp": "12550",
+      "telefono": "964551264",
+      "coordenadas": {
+        "lat": 39.9459018,
+        "lon": -0.065631
+      },
+      "fuente": "manual-googlemaps"
+    },
+    {
+      "code": "12345678",
+      "nombre": "Residencia geriátrica Santa Rosa Mola",
+      "tipo": "asistencial",
+      "titularidad": "Privat",
+      "direccion": "Calle Darremur Hermanas Consolación 39",
+      "municipio": "ALMASSORA",
+      "cp": "12550",
+      "telefono": "000000000",
+      "coordenadas": {
+        "lat": 39.9414949,
+        "lon": -0.0639122
+      },
+      "fuente": "manual-googlemaps"
+    }
+  ]

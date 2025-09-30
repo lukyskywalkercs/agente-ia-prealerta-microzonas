@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns = "urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>2.49.0.0.724.0.ES.20250928093005.694301PRP229101759051805</identifier>
+  <sender>http://www.aemet.es</sender>
+  <sent>2025-09-28T09:30:05-00:00</sent>
+  <status>Actual</status>
+  <msgType>Update</msgType>
+  <scope>Public</scope>
+  <references>http://www.aemet.es,2.49.0.0.724.0.ES.20250927093721.694301PRP229101758965841,2025-09-27T09:37:21-00:00</references>
+  <info>
+    <language>es-ES</language>
+    <category>Met</category>
+    <event>Aviso de lluvias de nivel amarillo</event>
+    <responseType>Monitor</responseType>
+    <urgency>Future</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <eventCode>
+      <valueName>AEMET-Meteoalerta fenomeno</valueName>
+      <value>PR;Lluvias</value>
+    </eventCode>
+    <effective>2025-09-28T11:30:05+02:00</effective>
+    <onset>2025-09-29T00:00:00+02:00</onset>
+    <expires>2025-09-29T11:59:59+02:00</expires>
+    <senderName>AEMET. Agencia Estatal de Meteorología</senderName>
+    <headline>Aviso de lluvias de nivel amarillo. Depresión central de Tarragona</headline>
+    <description>Precipitación acumulada en 12 horas: 40 mm.</description>
+    <instruction>Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.</instruction>
+    <web>https://www.aemet.es/es/eltiempo/prediccion/avisos</web>
+    <contact>AEMET</contact>
+    <parameter>
+      <valueName>AEMET-Meteoalerta nivel</valueName>
+      <value>amarillo</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta parametro</valueName>
+      <value>P2;Precipitación acumulada en 12 horas;40 mm</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta probabilidad</valueName>
+      <value>40%-70%</value>
+    </parameter>
+    <area>
+      <areaDesc>Depresión central de Tarragona</areaDesc>
+      <polygon>41.28,0.39 41.28,0.43 41.32,0.44 41.34,0.46 41.29,0.5 41.29,0.53 41.33,0.56 41.29,0.6 41.31,0.67 41.32,0.75 41.3,0.72 41.25,0.69 41.22,0.71 41.18,0.65 41.17,0.61 41.14,0.61 41.12,0.56 41.06,0.5 41.03,0.47 40.96,0.44 40.96,0.4 40.93,0.37 40.89,0.37 40.85,0.33 40.82,0.27 40.86,0.25 40.92,0.26 40.94,0.28 40.99,0.28 41.02,0.26 41.04,0.23 41.07,0.22 41.1,0.2 41.13,0.22 41.16,0.3 41.23,0.32 41.23,0.37 41.28,0.39</polygon>
+      <geocode>
+        <valueName>AEMET-Meteoalerta zona</valueName>
+        <value>694301</value>
+      </geocode>
+    </area>
+  </info>
+  <info>
+    <language>en-GB</language>
+    <category>Met</category>
+    <event>Moderate rain warning</event>
+    <responseType>Monitor</responseType>
+    <urgency>Future</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <eventCode>
+      <valueName>AEMET-Meteoalerta fenomeno</valueName>
+      <value>PR;Lluvias</value>
+    </eventCode>
+    <effective>2025-09-28T11:30:05+02:00</effective>
+    <onset>2025-09-29T00:00:00+02:00</onset>
+    <expires>2025-09-29T11:59:59+02:00</expires>
+    <senderName>AEMET. State Meteorological Agency</senderName>
+    <headline>Moderate rain warning. Depresión central de Tarragona</headline>
+    <description>Twelve-hours accumulated precipitation: 40 mm.</description>
+    <instruction>Be aware, keep up to date with the latest weather forecast. Moderate damages to people and properties may occur, especially to those vulnerable or in exposed areas.</instruction>
+    <web>https://www.aemet.es/en/eltiempo/prediccion/avisos</web>
+    <contact>AEMET</contact>
+    <parameter>
+      <valueName>AEMET-Meteoalerta nivel</valueName>
+      <value>amarillo</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta parametro</valueName>
+      <value>P2;Twelve-hours accumulated precipitation;40 mm</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta probabilidad</valueName>
+      <value>40%-70%</value>
+    </parameter>
+    <area>
+      <areaDesc>Depresión central de Tarragona</areaDesc>
+      <polygon>41.28,0.39 41.28,0.43 41.32,0.44 41.34,0.46 41.29,0.5 41.29,0.53 41.33,0.56 41.29,0.6 41.31,0.67 41.32,0.75 41.3,0.72 41.25,0.69 41.22,0.71 41.18,0.65 41.17,0.61 41.14,0.61 41.12,0.56 41.06,0.5 41.03,0.47 40.96,0.44 40.96,0.4 40.93,0.37 40.89,0.37 40.85,0.33 40.82,0.27 40.86,0.25 40.92,0.26 40.94,0.28 40.99,0.28 41.02,0.26 41.04,0.23 41.07,0.22 41.1,0.2 41.13,0.22 41.16,0.3 41.23,0.32 41.23,0.37 41.28,0.39</polygon>
+      <geocode>
+        <valueName>AEMET-Meteoalerta zona</valueName>
+        <value>694301</value>
+      </geocode>
+    </area>
+  </info>
+</alert>

@@ -1,0 +1,85 @@
+[
+  {
+    "id": "plan_emergencias_almassora_2023",
+    "titulo": "Plan de Emergencias Municipal de Almassora 2023",
+    "tipo": "plan",
+    "fecha": "2023-01-15",
+    "organo": "Ayuntamiento de Almassora",
+    "url": "https://www.almassora.es/planes-emergencia",
+    "contenido_relevante": {
+      "distancia_seguridad": [
+        "Artículo 12: Zona de seguridad de 300 metros del cauce del río Millars en episodios de lluvia intensa",
+        "Artículo 15: Evacuación preventiva de centros educativos a 200 metros de zonas inundables"
+      ],
+      "protocolos_evacuacion": [
+        "Artículo 23: Protocolo específico para CEIP Embajador Beltrán y IES Almassora",
+        "Artículo 25: Coordinación con Protección Civil de Castellón para activación de recursos"
+      ],
+      "responsabilidades": [
+        "Artículo 8: Alcalde como máxima autoridad en emergencias locales",
+        "Artículo 10: Policía Local responsable del control de accesos en Camí Vora Riu y Camí de la Creu"
+      ],
+      "criterios_activacion": [
+        "Artículo 18: Activación inmediata con aviso naranja AEMET para subzona 771204",
+        "Artículo 20: Cierre preventivo de vados en Camí de les Oliveres con lluvia >20mm/h"
+      ]
+    },
+    "estado": "vigente"
+  },
+  {
+    "id": "decreto_municipal_vados_2022",
+    "titulo": "Decreto Municipal sobre Cierre de Vados en Episodios Meteorológicos Adversos",
+    "tipo": "decreto",
+    "fecha": "2022-09-01",
+    "organo": "Ayuntamiento de Almassora",
+    "url": "https://www.almassora.es/normativa-vados",
+    "contenido_relevante": {
+      "distancia_seguridad": [
+        "Artículo 3: Cierre automático de vados a menos de 150 metros de cauces principales",
+        "Artículo 5: Zona de exclusión de 100 metros en torno a vados peligrosos"
+      ],
+      "protocolos_evacuacion": [
+        "Artículo 7: Protocolo de cierre coordinado con Guardia Civil y Policía Local"
+      ],
+      "responsabilidades": [
+        "Artículo 2: Policía Local responsable del cierre físico de accesos",
+        "Artículo 4: Servicios municipales responsables de señalización"
+      ],
+      "criterios_activacion": [
+        "Artículo 1: Activación con aviso amarillo AEMET para vados críticos",
+        "Artículo 6: Cierre inmediato con precipitación >15mm en 1 hora"
+      ]
+    },
+    "estado": "vigente"
+  },
+  {
+    "id": "ordenanza_centros_educativos_2021",
+    "titulo": "Ordenanza Municipal de Protección de Centros Educativos en Emergencias",
+    "tipo": "orden",
+    "fecha": "2021-03-10",
+    "organo": "Ayuntamiento de Almassora",
+    "url": "https://www.almassora.es/ordenanza-centros-educativos",
+    "contenido_relevante": {
+      "distancia_seguridad": [
+        "Artículo 12: Evaluación de riesgo para centros a menos de 500 metros de cauces",
+        "Artículo 15: Plan de evacuación para centros a menos de 300 metros de zonas inundables"
+      ],
+      "protocolos_evacuacion": [
+        "Artículo 8: Protocolo específico para CEIP Embajador Beltrán (distancia al río: 180m)",
+        "Artículo 10: Protocolo específico para IES Almassora (distancia al río: 420m)",
+        "Artículo 12: Coordinación con Conselleria de Educación para evacuación escolar"
+      ],
+      "responsabilidades": [
+        "Artículo 5: Director del centro responsable de la evacuación interna",
+        "Artículo 7: Alcalde responsable de la evacuación externa y alojamiento temporal"
+      ],
+      "criterios_activacion": [
+        "Artículo 18: Activación con aviso naranja AEMET para centros a menos de 300m del río",
+        "Artículo 20: Evacuación preventiva con aviso rojo AEMET para todos los centros"
+      ]
+    },
+    "estado": "vigente"
+  }
+]
+
+

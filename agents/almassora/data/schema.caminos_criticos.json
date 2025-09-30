@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "nombre"],
+    "properties": {
+      "id": { "type": "string" },
+      "nombre": { "type": "string" },
+      "pk_inicio": { "type": "number" },
+      "pk_fin": { "type": "number" },
+      "geometry": {
+        "type": "object",
+        "required": ["type", "coordinates"],
+        "properties": {
+          "type": { "const": "LineString" },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "fuente": "Datos públicos municipales Almassora",
+    "actualizado": "2024-01-15",
+    "descripcion": "Centros vulnerables en caso de inundación pluvial"
+  },
+  "centros": [
+    {
+      "id": "ceip_embajador_beltran",
+      "nombre": "CEIP Embajador Beltrán",
+      "tipo": "colegio_publico",
+      "coordenadas": {
+        "lat": 39.9435,
+        "lon": -0.0542
+      },
+      "direccion": "Carrer de la Mare de Déu, 12540 Almassora",
+      "vulnerabilidad": "alta",
+      "distancia_rio_millars": 180,
+      "observaciones": "Muy próximo al cauce del río Millars. Zona de riesgo en caso de crecida."
+    },
+    {
+      "id": "centro_dia_sud",
+      "nombre": "Centro de Día Sud",
+      "tipo": "centro_dia",
+      "coordenadas": {
+        "lat": 39.9401,
+        "lon": -0.0538
+      },
+      "direccion": "Carrer de Sant Antoni, 12540 Almassora",
+      "vulnerabilidad": "alta",
+      "distancia_rio_millars": 150,
+      "observaciones": "Dentro de zona PATRICOVA tipo 2. Población de riesgo (mayores)."
+    },
+    {
+      "id": "ies_almassora",
+      "nombre": "IES Almassora",
+      "tipo": "instituto",
+      "coordenadas": {
+        "lat": 39.9456,
+        "lon": -0.0512
+      },
+      "direccion": "Avinguda del País Valencià, 12540 Almassora",
+      "vulnerabilidad": "media",
+      "distancia_rio_millars": 320,
+      "observaciones": "Zona más elevada, menor riesgo directo de inundación."
+    },
+    {
+      "id": "residencia_mayores",
+      "nombre": "Residencia de Mayores",
+      "tipo": "residencia",
+      "coordenadas": {
+        "lat": 39.9398,
+        "lon": -0.0545
+      },
+      "direccion": "Carrer del Raval, 12540 Almassora",
+      "vulnerabilidad": "alta",
+      "distancia_rio_millars": 120,
+      "observaciones": "Muy próxima al río. Población de alto riesgo."
+    }
+  ]
+}

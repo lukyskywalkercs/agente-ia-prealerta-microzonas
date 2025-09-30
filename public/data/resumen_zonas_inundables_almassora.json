@@ -1,0 +1,152 @@
+{
+  "municipio": "Almassora",
+  "fecha_actualizacion": "2025-09-29T13:47:29.493Z",
+  "total_zonas": 12,
+  "por_severidad": {
+    "muy_alto": 3,
+    "alto": 5,
+    "medio": 3,
+    "bajo": 1
+  },
+  "por_tipo": {
+    "patricova": 8,
+    "cartografia_municipal": 2,
+    "historico": 2
+  },
+  "zonas_patricova": [
+    {
+      "id": "patricova_001",
+      "nombre": "PATRICOVA - Zona 1: Margen Derecha Río Millars (Tramo Norte)",
+      "severidad": "muy_alto",
+      "descripcion": "Zona PATRICOVA de riesgo muy alto. Margen derecha del río Millars en tramo urbano norte de Almassora."
+    },
+    {
+      "id": "patricova_002",
+      "nombre": "PATRICOVA - Zona 2: Margen Izquierda Río Millars (Tramo Centro)",
+      "severidad": "muy_alto",
+      "descripcion": "Zona PATRICOVA de riesgo muy alto. Margen izquierda del río Millars en tramo centro urbano."
+    },
+    {
+      "id": "patricova_003",
+      "nombre": "PATRICOVA - Zona 3: Barranc de les Oliveres",
+      "severidad": "alto",
+      "descripcion": "Barranco con riesgo de avenida en episodios de lluvia intensa."
+    },
+    {
+      "id": "patricova_004",
+      "nombre": "PATRICOVA - Zona 4: Polígono Industrial (Drenaje)",
+      "severidad": "alto",
+      "descripcion": "Zona industrial con drenaje artificial insuficiente."
+    },
+    {
+      "id": "patricova_005",
+      "nombre": "PATRICOVA - Zona 5: Barranc de Sant Antoni",
+      "severidad": "medio",
+      "descripcion": "Barranco menor con riesgo en episodios excepcionales."
+    },
+    {
+      "id": "patricova_006",
+      "nombre": "PATRICOVA - Zona 6: Barranc de la Creu",
+      "severidad": "alto",
+      "descripcion": "Barranco con vado peligroso conocido por anegarse."
+    },
+    {
+      "id": "patricova_007",
+      "nombre": "PATRICOVA - Zona 7: Barranc de la Mare de Déu",
+      "severidad": "medio",
+      "descripcion": "Barranco en zona residencial con drenaje urbano."
+    },
+    {
+      "id": "patricova_008",
+      "nombre": "PATRICOVA - Zona 8: Zona Agrícola (Drenaje Natural)",
+      "severidad": "bajo",
+      "descripcion": "Zona agrícola con drenaje natural mejorado."
+    }
+  ],
+  "todas_las_zonas": [
+    {
+      "id": "patricova_001",
+      "nombre": "PATRICOVA - Zona 1: Margen Derecha Río Millars (Tramo Norte)",
+      "severidad": "muy_alto",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_002",
+      "nombre": "PATRICOVA - Zona 2: Margen Izquierda Río Millars (Tramo Centro)",
+      "severidad": "muy_alto",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_003",
+      "nombre": "PATRICOVA - Zona 3: Barranc de les Oliveres",
+      "severidad": "alto",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_004",
+      "nombre": "PATRICOVA - Zona 4: Polígono Industrial (Drenaje)",
+      "severidad": "alto",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_005",
+      "nombre": "PATRICOVA - Zona 5: Barranc de Sant Antoni",
+      "severidad": "medio",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_006",
+      "nombre": "PATRICOVA - Zona 6: Barranc de la Creu",
+      "severidad": "alto",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_007",
+      "nombre": "PATRICOVA - Zona 7: Barranc de la Mare de Déu",
+      "severidad": "medio",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "patricova_008",
+      "nombre": "PATRICOVA - Zona 8: Zona Agrícola (Drenaje Natural)",
+      "severidad": "bajo",
+      "tipo": "patricova",
+      "fuente": "PATRICOVA - Conselleria de Política Territorial"
+    },
+    {
+      "id": "cauce_millars_principal",
+      "nombre": "Cauce Principal Río Millars",
+      "severidad": "muy_alto",
+      "tipo": "cartografia_municipal",
+      "fuente": "Cartografía Municipal Almassora + IGN"
+    },
+    {
+      "id": "cauce_barranc_oliveres",
+      "nombre": "Cauce Barranc de les Oliveres",
+      "severidad": "alto",
+      "tipo": "cartografia_municipal",
+      "fuente": "Cartografía Municipal Almassora"
+    },
+    {
+      "id": "historico_2019",
+      "nombre": "Zona Histórica Inundación Noviembre 2019",
+      "severidad": "alto",
+      "tipo": "historico",
+      "fuente": "Registro Municipal de Emergencias"
+    },
+    {
+      "id": "historico_2020",
+      "nombre": "Zona Histórica Inundación Enero 2020",
+      "severidad": "medio",
+      "tipo": "historico",
+      "fuente": "Registro Municipal de Emergencias"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "activo": false,
+  "subzona": "771204",
+  "vigencia": {
+    "inicio": "",
+    "fin": ""
+  },
+  "fenomenos": [],
+  "centros_afectados": [],
+  "caminos_afectados": [],
+  "zonas_riesgo_intersectadas": [],
+  "fuente": "AEMET / Agente IA",
+  "generated_at": "2025-09-30T07:53:19.061Z",
+  "notas": [
+    "No hay avisos meteorológicos activos para esta subzona en el momento de la última descarga."
+  ]
+}

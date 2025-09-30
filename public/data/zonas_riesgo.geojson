@@ -1,0 +1,114 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "fuente": "PATRICOVA + Catálogo municipal Almassora",
+    "actualizado": "2024-01-15",
+    "descripcion": "Zonas estructurales de riesgo de inundación en Almassora"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zona_patricova_1",
+        "nombre": "Zona PATRICOVA Tipo 1 - Margen Derecha Millars",
+        "tipo": "patricova_tipo_1",
+        "severidad": "alta",
+        "descripcion": "Zona oficial de riesgo alto según PATRICOVA. Inundación probable en eventos 10-20 años."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.0548, 39.9425],
+          [-0.0545, 39.9420],
+          [-0.0542, 39.9415],
+          [-0.0545, 39.9410],
+          [-0.0548, 39.9405],
+          [-0.0551, 39.9408],
+          [-0.0551, 39.9415],
+          [-0.0548, 39.9425]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zona_patricova_2",
+        "nombre": "Zona PATRICOVA Tipo 2 - Centro de Día",
+        "tipo": "patricova_tipo_2",
+        "severidad": "media",
+        "descripcion": "Zona oficial de riesgo medio. Inundación posible en eventos 20-50 años."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.0538, 39.9401],
+          [-0.0535, 39.9398],
+          [-0.0532, 39.9395],
+          [-0.0535, 39.9392],
+          [-0.0538, 39.9395],
+          [-0.0541, 39.9398],
+          [-0.0538, 39.9401]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vado_peligroso_1",
+        "nombre": "Vado Peligroso - Camí de la Creu",
+        "tipo": "vado_peligroso",
+        "severidad": "media",
+        "descripcion": "Vado conocido por anegarse con lluvias intensas. Histórico de cortes de tráfico."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.0538, 39.9432]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "margen_rio_millars",
+        "nombre": "Márgenes Río Millars - Tramo Urbano",
+        "tipo": "margen_rio",
+        "severidad": "alta",
+        "descripcion": "Márgenes del río Millars en tramo urbano. Riesgo de desbordamiento."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-0.0555, 39.9435],
+          [-0.0550, 39.9430],
+          [-0.0545, 39.9425],
+          [-0.0540, 39.9420],
+          [-0.0535, 39.9415],
+          [-0.0530, 39.9410],
+          [-0.0525, 39.9405],
+          [-0.0520, 39.9400]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zona_drenaje_insuficiente",
+        "nombre": "Zona Drenaje Insuficiente - Les Oliveres",
+        "tipo": "drenaje_insuficiente",
+        "severidad": "media",
+        "descripcion": "Zona con drenaje insuficiente. Acumulación de agua en lluvias intensas."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.0528, 39.9448],
+          [-0.0525, 39.9445],
+          [-0.0522, 39.9442],
+          [-0.0525, 39.9440],
+          [-0.0528, 39.9443],
+          [-0.0531, 39.9446],
+          [-0.0528, 39.9448]
+        ]]
+      }
+    }
+  ]
+}

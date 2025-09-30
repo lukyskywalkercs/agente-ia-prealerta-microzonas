@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "fuente": "Catálogo de caminos rurales Almassora",
+    "actualizado": "2024-01-15",
+    "descripcion": "Caminos rurales vulnerables a cierre por inundación"
+  },
+  "caminos": [
+    {
+      "id": "cami_vora_riu",
+      "nombre": "Camí Vora Riu",
+      "tipo": "camino_rural",
+      "longitud_km": 2.3,
+      "puntos_kilometricos": [
+        {
+          "pk": 3.1,
+          "coordenadas": {
+            "lat": 39.9425,
+            "lon": -0.0548
+          },
+          "descripcion": "Inicio zona crítica - próximo a CEIP Embajador Beltrán"
+        },
+        {
+          "pk": 4.2,
+          "coordenadas": {
+            "lat": 39.9418,
+            "lon": -0.0545
+          },
+          "descripcion": "Tramo medio - cruce con zona inundable"
+        },
+        {
+          "pk": 5.4,
+          "coordenadas": {
+            "lat": 39.9405,
+            "lon": -0.0542
+          },
+          "descripcion": "Final zona crítica - próximo a Centro de Día"
+        }
+      ],
+      "riesgo_inundacion": "alto",
+      "observaciones": "Camino paralelo al río Millars. Primer tramo a cerrar en prealerta naranja."
+    },
+    {
+      "id": "cami_la_creu",
+      "nombre": "Camí de la Creu",
+      "tipo": "camino_rural",
+      "longitud_km": 1.8,
+      "puntos_kilometricos": [
+        {
+          "pk": 1.2,
+          "coordenadas": {
+            "lat": 39.9445,
+            "lon": -0.0535
+          },
+          "descripcion": "Acceso a zona residencial próxima al río"
+        },
+        {
+          "pk": 2.8,
+          "coordenadas": {
+            "lat": 39.9432,
+            "lon": -0.0538
+          },
+          "descripcion": "Punto crítico - vado peligroso"
+        }
+      ],
+      "riesgo_inundacion": "medio",
+      "observaciones": "Vado conocido por anegarse con lluvias intensas."
+    },
+    {
+      "id": "cami_les_oliveres",
+      "nombre": "Camí de les Oliveres",
+      "tipo": "camino_rural",
+      "longitud_km": 1.5,
+      "puntos_kilometricos": [
+        {
+          "pk": 0.8,
+          "coordenadas": {
+            "lat": 39.9451,
+            "lon": -0.0525
+          },
+          "descripcion": "Acceso a fincas agrícolas"
+        },
+        {
+          "pk": 1.5,
+          "coordenadas": {
+            "lat": 39.9448,
+            "lon": -0.0528
+          },
+          "descripcion": "Zona de drenaje comprometida"
+        }
+      ],
+      "riesgo_inundacion": "medio",
+      "observaciones": "Drenaje insuficiente en tramo final."
+    }
+  ]
+}

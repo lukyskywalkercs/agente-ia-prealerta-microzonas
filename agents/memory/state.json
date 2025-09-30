@@ -1,0 +1,64 @@
+{
+  "6908": {
+    "estado": "CRÍTICA",
+    "lastUpdate": "2025-09-23T07:18:31.764Z",
+    "avisos": [
+      {
+        "id": "aviso-6908-001",
+        "subzona": "6908",
+        "zona": "69",
+        "nivel": "CRÍTICA",
+        "evento": "Precipitaciones intensas",
+        "desde": "2025-09-23T08:52:38.455321Z",
+        "hasta": "2025-09-23T16:52:38.455323Z",
+        "desc": "Lluvias muy fuertes en el Vallès Oriental",
+        "probabilidad": "70%-100%",
+        "valor": "Rojo",
+        "comentario": "Riesgo muy alto por acumulaciones de agua. Precaución extrema.",
+        "parametros": [
+          {
+            "valueName": "AEMET-Meteoalerta nivel",
+            "value": "rojo"
+          },
+          {
+            "valueName": "AEMET-Meteoalerta probabilidad",
+            "value": "70%-100%"
+          }
+        ],
+        "origenXml": "/tmp/mock_6908.xml",
+        "area": "69"
+      }
+    ]
+  },
+  "7712": {
+    "estado": "MEDIA",
+    "lastUpdate": "2025-09-23T07:18:31.764Z",
+    "avisos": [
+      {
+        "id": "aviso-7712-001",
+        "subzona": "7712",
+        "zona": "77",
+        "nivel": "MEDIA",
+        "evento": "Tormentas",
+        "desde": "2025-09-23T07:52:38.455308Z",
+        "hasta": "2025-09-23T18:52:38.455318Z",
+        "desc": "Tormentas fuertes en Castellón interior sur",
+        "probabilidad": "40%-70%",
+        "valor": "Naranja",
+        "comentario": "Se esperan tormentas localmente fuertes, con posibilidad de granizo.",
+        "parametros": [
+          {
+            "valueName": "AEMET-Meteoalerta nivel",
+            "value": "naranja"
+          },
+          {
+            "valueName": "AEMET-Meteoalerta probabilidad",
+            "value": "40%-70%"
+          }
+        ],
+        "origenXml": "/tmp/mock_7712.xml",
+        "area": "77"
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns = "urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>2.49.0.0.724.0.ES.20250929092415.770301TOTO30101759137855</identifier>
+  <sender>http://www.aemet.es</sender>
+  <sent>2025-09-29T09:24:15-00:00</sent>
+  <status>Actual</status>
+  <msgType>Update</msgType>
+  <scope>Public</scope>
+  <references>http://www.aemet.es,2.49.0.0.724.0.ES.20250928093557.770301TOTO29221759052157,2025-09-28T09:35:57-00:00 http://www.aemet.es,2.49.0.0.724.0.ES.20250928093851.770301TOTO30101759052331,2025-09-28T09:38:51-00:00</references>
+  <info>
+    <language>es-ES</language>
+    <category>Met</category>
+    <event>Aviso de tormentas de nivel amarillo</event>
+    <responseType>Monitor</responseType>
+    <urgency>Immediate</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <eventCode>
+      <valueName>AEMET-Meteoalerta fenomeno</valueName>
+      <value>TO;Tormentas</value>
+    </eventCode>
+    <effective>2025-09-29T11:24:15+02:00</effective>
+    <onset>2025-09-29T11:00:00+02:00</onset>
+    <expires>2025-09-30T11:59:59+02:00</expires>
+    <senderName>AEMET. Agencia Estatal de Meteorología</senderName>
+    <headline>Aviso de tormentas de nivel amarillo. Litoral norte de Alicante</headline>
+    <description></description>
+    <instruction>Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.</instruction>
+    <web>https://www.aemet.es/es/eltiempo/prediccion/avisos</web>
+    <contact>AEMET</contact>
+    <parameter>
+      <valueName>AEMET-Meteoalerta nivel</valueName>
+      <value>amarillo</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta parametro</valueName>
+      <value>TO;Tormentas;</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta probabilidad</valueName>
+      <value>40%-70%</value>
+    </parameter>
+    <area>
+      <areaDesc>Litoral norte de Alicante</areaDesc>
+      <polygon>38.88,-0.3 38.86,-0.26 38.86,-0.15 38.89,-0.07 38.89,-0.04 38.87,-0.01 38.85,0.09 38.81,0.17 38.77,0.2 38.76,0.22 38.73,0.2 38.64,0.07 38.63,0.03 38.63,-0.02 38.58,-0.06 38.62,-0.08 38.65,-0.16 38.61,-0.19 38.61,-0.21 38.59,-0.27 38.62,-0.33 38.65,-0.33 38.7,-0.36 38.69,-0.44 38.74,-0.51 38.77,-0.53 38.76,-0.56 38.8,-0.59 38.81,-0.53 38.8,-0.47 38.83,-0.43 38.83,-0.38 38.88,-0.3</polygon>
+      <geocode>
+        <valueName>AEMET-Meteoalerta zona</valueName>
+        <value>770301</value>
+      </geocode>
+    </area>
+  </info>
+  <info>
+    <language>en-GB</language>
+    <category>Met</category>
+    <event>Moderate thunderstorm warning</event>
+    <responseType>Monitor</responseType>
+    <urgency>Immediate</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <eventCode>
+      <valueName>AEMET-Meteoalerta fenomeno</valueName>
+      <value>TO;Tormentas</value>
+    </eventCode>
+    <effective>2025-09-29T11:24:15+02:00</effective>
+    <onset>2025-09-29T11:00:00+02:00</onset>
+    <expires>2025-09-30T11:59:59+02:00</expires>
+    <senderName>AEMET. State Meteorological Agency</senderName>
+    <headline>Moderate thunderstorm warning. Litoral norte de Alicante</headline>
+    <description></description>
+    <instruction>Be aware, keep up to date with the latest weather forecast. Moderate damages to people and properties may occur, especially to those vulnerable or in exposed areas.</instruction>
+    <web>https://www.aemet.es/en/eltiempo/prediccion/avisos</web>
+    <contact>AEMET</contact>
+    <parameter>
+      <valueName>AEMET-Meteoalerta nivel</valueName>
+      <value>amarillo</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta parametro</valueName>
+      <value>TO;Thunderstorm;</value>
+    </parameter>
+    <parameter>
+      <valueName>AEMET-Meteoalerta probabilidad</valueName>
+      <value>40%-70%</value>
+    </parameter>
+    <area>
+      <areaDesc>Litoral norte de Alicante</areaDesc>
+      <polygon>38.88,-0.3 38.86,-0.26 38.86,-0.15 38.89,-0.07 38.89,-0.04 38.87,-0.01 38.85,0.09 38.81,0.17 38.77,0.2 38.76,0.22 38.73,0.2 38.64,0.07 38.63,0.03 38.63,-0.02 38.58,-0.06 38.62,-0.08 38.65,-0.16 38.61,-0.19 38.61,-0.21 38.59,-0.27 38.62,-0.33 38.65,-0.33 38.7,-0.36 38.69,-0.44 38.74,-0.51 38.77,-0.53 38.76,-0.56 38.8,-0.59 38.81,-0.53 38.8,-0.47 38.83,-0.43 38.83,-0.38 38.88,-0.3</polygon>
+      <geocode>
+        <valueName>AEMET-Meteoalerta zona</valueName>
+        <value>770301</value>
+      </geocode>
+    </area>
+  </info>
+</alert>

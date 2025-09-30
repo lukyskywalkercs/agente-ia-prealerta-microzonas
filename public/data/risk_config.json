@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "imminenceHoursThreshold": 6,
+  "longDurationHoursThreshold": 12,
+  "multiplicityStep": 0.25,
+  "multiplicityMaxBonus": 1
+}
+
+
+
+
+
+

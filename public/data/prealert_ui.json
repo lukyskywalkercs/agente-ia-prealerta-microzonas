@@ -1,0 +1,38 @@
+{
+  "lastRunAt": "2025-09-23T07:18:32.344Z",
+  "total": 2,
+  "items": [
+    {
+      "id": "prealert-aviso-7712-001",
+      "subzona": "7712",
+      "zona": "77",
+      "nivel": "MEDIA",
+      "evento": "Tormentas",
+      "ventana": {
+        "desde": "2025-09-23T07:52:38.455308Z",
+        "hasta": "2025-09-23T18:52:38.455318Z"
+      },
+      "descripcion": "Tormentas fuertes en Castellón interior sur",
+      "probabilidad": "40%-70%",
+      "comentario": "Se esperan tormentas localmente fuertes, con posibilidad de granizo.",
+      "origenXml": "/tmp/mock_7712.xml",
+      "createdAt": "2025-09-23T07:18:32.344Z"
+    },
+    {
+      "id": "prealert-aviso-6908-001",
+      "subzona": "6908",
+      "zona": "69",
+      "nivel": "CRÍTICA",
+      "evento": "Precipitaciones intensas",
+      "ventana": {
+        "desde": "2025-09-23T08:52:38.455321Z",
+        "hasta": "2025-09-23T16:52:38.455323Z"
+      },
+      "descripcion": "Lluvias muy fuertes en el Vallès Oriental",
+      "probabilidad": "70%-100%",
+      "comentario": "Riesgo muy alto por acumulaciones de agua. Precaución extrema.",
+      "origenXml": "/tmp/mock_6908.xml",
+      "createdAt": "2025-09-23T07:18:32.344Z"
+    }
+  ]
+}

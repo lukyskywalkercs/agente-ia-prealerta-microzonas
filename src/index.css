@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-nasa-gray text-nasa-black font-sans antialiased;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+.btn-primary {
+  @apply bg-nasa-red text-white font-semibold px-4 py-2 rounded shadow hover:bg-red-700 transition;
+}
+
+.card-nasa {
+  @apply bg-white border border-gray-200 rounded-xl shadow-md p-6;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+nav li a.active-scrollspy {
+  background-color: #e5e7eb;
+  border-left: 4px solid #0b3d91;
+  padding-left: 0.5rem;
+  font-weight: 700;
+  color: #0b3d91;
+}

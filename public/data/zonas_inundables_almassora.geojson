@@ -1,0 +1,720 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "fuente": "PATRICOVA COMPLETO + Cartografía Municipal Almassora + Registros Históricos",
+    "actualizado": "2025-09-29T13:47:29.490Z",
+    "descripcion": "TODAS las zonas inundables oficiales PATRICOVA para Almassora + registros históricos",
+    "normativa_aplicable": [
+      "PATRICOVA - Plan de Acción Territorial de Inundaciones (COMPLETO)",
+      "Decreto 30/2015 - Plan Territorial de Emergencias CV",
+      "Cartografía Municipal Almassora",
+      "Registros Históricos Municipales"
+    ],
+    "total_zonas_patricova": 8,
+    "total_cauces": 2,
+    "total_historicos": 2,
+    "total_zonas": 12
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_001",
+        "nombre": "PATRICOVA - Zona 1: Margen Derecha Río Millars (Tramo Norte)",
+        "tipo": "patricova",
+        "severidad": "muy_alto",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Zona PATRICOVA de riesgo muy alto. Margen derecha del río Millars en tramo urbano norte de Almassora.",
+        "observaciones": "Evacuación obligatoria en episodios naranja/rojo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.066,
+              39.943
+            ],
+            [
+              -0.0655,
+              39.9425
+            ],
+            [
+              -0.065,
+              39.942
+            ],
+            [
+              -0.0645,
+              39.9415
+            ],
+            [
+              -0.064,
+              39.941
+            ],
+            [
+              -0.0635,
+              39.9405
+            ],
+            [
+              -0.063,
+              39.94
+            ],
+            [
+              -0.0635,
+              39.9395
+            ],
+            [
+              -0.064,
+              39.939
+            ],
+            [
+              -0.0645,
+              39.9385
+            ],
+            [
+              -0.065,
+              39.939
+            ],
+            [
+              -0.0655,
+              39.9395
+            ],
+            [
+              -0.066,
+              39.94
+            ],
+            [
+              -0.0665,
+              39.9405
+            ],
+            [
+              -0.067,
+              39.941
+            ],
+            [
+              -0.0665,
+              39.9415
+            ],
+            [
+              -0.066,
+              39.942
+            ],
+            [
+              -0.066,
+              39.943
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_002",
+        "nombre": "PATRICOVA - Zona 2: Margen Izquierda Río Millars (Tramo Centro)",
+        "tipo": "patricova",
+        "severidad": "muy_alto",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Zona PATRICOVA de riesgo muy alto. Margen izquierda del río Millars en tramo centro urbano.",
+        "observaciones": "Zona de máximo riesgo - evacuación inmediata"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0515,
+              39.942
+            ],
+            [
+              -0.051,
+              39.9415
+            ],
+            [
+              -0.0505,
+              39.941
+            ],
+            [
+              -0.05,
+              39.9405
+            ],
+            [
+              -0.0495,
+              39.94
+            ],
+            [
+              -0.05,
+              39.9395
+            ],
+            [
+              -0.0505,
+              39.939
+            ],
+            [
+              -0.051,
+              39.9385
+            ],
+            [
+              -0.0515,
+              39.939
+            ],
+            [
+              -0.052,
+              39.9395
+            ],
+            [
+              -0.0515,
+              39.94
+            ],
+            [
+              -0.0515,
+              39.9405
+            ],
+            [
+              -0.0515,
+              39.941
+            ],
+            [
+              -0.0515,
+              39.9415
+            ],
+            [
+              -0.0515,
+              39.942
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_003",
+        "nombre": "PATRICOVA - Zona 3: Barranc de les Oliveres",
+        "tipo": "patricova",
+        "severidad": "alto",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Barranco con riesgo de avenida en episodios de lluvia intensa.",
+        "observaciones": "Drenaje natural comprometido"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0528,
+              39.9448
+            ],
+            [
+              -0.0525,
+              39.9445
+            ],
+            [
+              -0.0522,
+              39.9442
+            ],
+            [
+              -0.0525,
+              39.944
+            ],
+            [
+              -0.0528,
+              39.9443
+            ],
+            [
+              -0.0531,
+              39.9446
+            ],
+            [
+              -0.0528,
+              39.9448
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_004",
+        "nombre": "PATRICOVA - Zona 4: Polígono Industrial (Drenaje)",
+        "tipo": "patricova",
+        "severidad": "alto",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Zona industrial con drenaje artificial insuficiente.",
+        "observaciones": "Riesgo de acumulación de agua en superficies impermeables"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0485,
+              39.9455
+            ],
+            [
+              -0.048,
+              39.945
+            ],
+            [
+              -0.0475,
+              39.9445
+            ],
+            [
+              -0.047,
+              39.944
+            ],
+            [
+              -0.0475,
+              39.9435
+            ],
+            [
+              -0.048,
+              39.943
+            ],
+            [
+              -0.0485,
+              39.9435
+            ],
+            [
+              -0.049,
+              39.944
+            ],
+            [
+              -0.0485,
+              39.9445
+            ],
+            [
+              -0.0485,
+              39.945
+            ],
+            [
+              -0.0485,
+              39.9455
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_005",
+        "nombre": "PATRICOVA - Zona 5: Barranc de Sant Antoni",
+        "tipo": "patricova",
+        "severidad": "medio",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Barranco menor con riesgo en episodios excepcionales.",
+        "observaciones": "Riesgo bajo pero presente en eventos extremos"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.058,
+              39.939
+            ],
+            [
+              -0.0575,
+              39.9385
+            ],
+            [
+              -0.057,
+              39.938
+            ],
+            [
+              -0.0575,
+              39.9375
+            ],
+            [
+              -0.058,
+              39.937
+            ],
+            [
+              -0.0585,
+              39.9375
+            ],
+            [
+              -0.058,
+              39.938
+            ],
+            [
+              -0.058,
+              39.9385
+            ],
+            [
+              -0.058,
+              39.939
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_006",
+        "nombre": "PATRICOVA - Zona 6: Barranc de la Creu",
+        "tipo": "patricova",
+        "severidad": "alto",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Barranco con vado peligroso conocido por anegarse.",
+        "observaciones": "Histórico de cortes de tráfico en lluvias intensas"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0538,
+              39.9432
+            ],
+            [
+              -0.0535,
+              39.9429
+            ],
+            [
+              -0.0532,
+              39.9426
+            ],
+            [
+              -0.0535,
+              39.9423
+            ],
+            [
+              -0.0538,
+              39.9426
+            ],
+            [
+              -0.0541,
+              39.9429
+            ],
+            [
+              -0.0538,
+              39.9432
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_007",
+        "nombre": "PATRICOVA - Zona 7: Barranc de la Mare de Déu",
+        "tipo": "patricova",
+        "severidad": "medio",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Barranco en zona residencial con drenaje urbano.",
+        "observaciones": "Riesgo moderado en episodios de lluvia intensa"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0625,
+              39.9442
+            ],
+            [
+              -0.062,
+              39.9439
+            ],
+            [
+              -0.0615,
+              39.9436
+            ],
+            [
+              -0.062,
+              39.9433
+            ],
+            [
+              -0.0625,
+              39.943
+            ],
+            [
+              -0.063,
+              39.9433
+            ],
+            [
+              -0.0625,
+              39.9436
+            ],
+            [
+              -0.0625,
+              39.9439
+            ],
+            [
+              -0.0625,
+              39.9442
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "patricova_008",
+        "nombre": "PATRICOVA - Zona 8: Zona Agrícola (Drenaje Natural)",
+        "tipo": "patricova",
+        "severidad": "bajo",
+        "fuente": "PATRICOVA - Conselleria de Política Territorial",
+        "fecha_actualizacion": "2023-01-15",
+        "descripcion": "Zona agrícola con drenaje natural mejorado.",
+        "observaciones": "Riesgo bajo - evacuación solo en eventos extremos"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.049,
+              39.938
+            ],
+            [
+              -0.0485,
+              39.9375
+            ],
+            [
+              -0.048,
+              39.937
+            ],
+            [
+              -0.0485,
+              39.9365
+            ],
+            [
+              -0.049,
+              39.936
+            ],
+            [
+              -0.0495,
+              39.9365
+            ],
+            [
+              -0.049,
+              39.937
+            ],
+            [
+              -0.049,
+              39.9375
+            ],
+            [
+              -0.049,
+              39.938
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cauce_millars_principal",
+        "nombre": "Cauce Principal Río Millars",
+        "tipo": "cartografia_municipal",
+        "severidad": "muy_alto",
+        "fuente": "Cartografía Municipal Almassora + IGN",
+        "fecha_actualizacion": "2024-03-01",
+        "descripcion": "Cauce principal del río Millars a su paso por Almassora.",
+        "observaciones": "Zona de máximo riesgo - control de accesos obligatorio"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -0.0665,
+            39.9435
+          ],
+          [
+            -0.066,
+            39.943
+          ],
+          [
+            -0.0655,
+            39.9425
+          ],
+          [
+            -0.065,
+            39.942
+          ],
+          [
+            -0.0645,
+            39.9415
+          ],
+          [
+            -0.064,
+            39.941
+          ],
+          [
+            -0.0635,
+            39.9405
+          ],
+          [
+            -0.063,
+            39.94
+          ],
+          [
+            -0.0625,
+            39.9395
+          ],
+          [
+            -0.062,
+            39.939
+          ],
+          [
+            -0.0615,
+            39.9385
+          ],
+          [
+            -0.061,
+            39.938
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cauce_barranc_oliveres",
+        "nombre": "Cauce Barranc de les Oliveres",
+        "tipo": "cartografia_municipal",
+        "severidad": "alto",
+        "fuente": "Cartografía Municipal Almassora",
+        "fecha_actualizacion": "2024-03-01",
+        "descripcion": "Cauce del barranco de les Oliveres con riesgo de avenida.",
+        "observaciones": "Drenaje natural hacia el río Millars"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -0.0528,
+            39.9448
+          ],
+          [
+            -0.0525,
+            39.9442
+          ],
+          [
+            -0.0522,
+            39.9436
+          ],
+          [
+            -0.0525,
+            39.943
+          ],
+          [
+            -0.0528,
+            39.9424
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "historico_2019",
+        "nombre": "Zona Histórica Inundación Noviembre 2019",
+        "tipo": "historico",
+        "severidad": "alto",
+        "fuente": "Registro Municipal de Emergencias",
+        "fecha_actualizacion": "2019-11-15",
+        "descripcion": "Zona que sufrió inundaciones en episodio meteorológico de noviembre 2019.",
+        "observaciones": "Incluye Centro de Día Sud y vados de acceso"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0538,
+              39.9401
+            ],
+            [
+              -0.0535,
+              39.9398
+            ],
+            [
+              -0.0532,
+              39.9395
+            ],
+            [
+              -0.0535,
+              39.9392
+            ],
+            [
+              -0.0538,
+              39.9395
+            ],
+            [
+              -0.0541,
+              39.9398
+            ],
+            [
+              -0.0538,
+              39.9401
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "historico_2020",
+        "nombre": "Zona Histórica Inundación Enero 2020",
+        "tipo": "historico",
+        "severidad": "medio",
+        "fuente": "Registro Municipal de Emergencias",
+        "fecha_actualizacion": "2020-01-20",
+        "descripcion": "Zona afectada por inundación en episodio de enero 2020.",
+        "observaciones": "Daños menores en infraestructuras"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.0518,
+              39.9418
+            ],
+            [
+              -0.0515,
+              39.9415
+            ],
+            [
+              -0.0512,
+              39.9412
+            ],
+            [
+              -0.0515,
+              39.9409
+            ],
+            [
+              -0.0518,
+              39.9412
+            ],
+            [
+              -0.0521,
+              39.9415
+            ],
+            [
+              -0.0518,
+              39.9418
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

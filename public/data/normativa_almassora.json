@@ -1,0 +1,54 @@
+{
+  "municipio": "Almassora",
+  "fecha_analisis": "2025-09-29T13:14:37.194Z",
+  "normativas_aplicables": [
+    {
+      "id": "decreto_30_2015",
+      "titulo": "Decreto 30/2015, Plan Territorial de Emergencias de la Comunidad Valenciana",
+      "fecha": "2015-03-06",
+      "estado": "vigente"
+    }
+  ],
+  "criterios_extraidos": [
+    {
+      "tipo": "distancia_seguridad",
+      "descripcion": "Artículo 45: Zonas de seguridad mínima de 500 metros de cauces en episodios de lluvia intensa",
+      "fuente_normativa": "Decreto 30/2015, Plan Territorial de Emergencias de la Comunidad Valenciana",
+      "valor": 500,
+      "unidad": "metros",
+      "aplicable_desde": "2015-03-06"
+    },
+    {
+      "tipo": "distancia_seguridad",
+      "descripcion": "Artículo 67: Evacuación preventiva en un radio de 300 metros de zonas inundables",
+      "fuente_normativa": "Decreto 30/2015, Plan Territorial de Emergencias de la Comunidad Valenciana",
+      "valor": 300,
+      "unidad": "metros",
+      "aplicable_desde": "2015-03-06"
+    },
+    {
+      "tipo": "criterio_activacion",
+      "descripcion": "Artículo 78: Activación por aviso naranja o rojo de AEMET",
+      "fuente_normativa": "Decreto 30/2015, Plan Territorial de Emergencias de la Comunidad Valenciana",
+      "valor": "Artículo 78: Activación por aviso naranja o rojo de AEMET",
+      "aplicable_desde": "2015-03-06"
+    },
+    {
+      "tipo": "criterio_activacion",
+      "descripcion": "Artículo 82: Criterios específicos para centros educativos y sanitarios",
+      "fuente_normativa": "Decreto 30/2015, Plan Territorial de Emergencias de la Comunidad Valenciana",
+      "valor": "Artículo 82: Criterios específicos para centros educativos y sanitarios",
+      "aplicable_desde": "2015-03-06"
+    }
+  ],
+  "configuracion_recomendada": {
+    "distancia_minima_seguridad": 300,
+    "umbral_activacion": "naranja_rojo_aemet",
+    "responsabilidad_principal": "alcalde_municipio",
+    "coordinacion_requerida": [
+      "aemet",
+      "policia_local",
+      "proteccion_civil"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "lastRunAt": "2025-09-23T06:55:42.226823Z",
+  "endpoint": "https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area",
+  "status": "ok",
+  "numAvisos": 2
+}
