@@ -31,7 +31,7 @@ Este repositorio contiene una plataforma completa para procesar, analizar y visu
 
 ## ✅ Características del agente AEMET
 
-- 🔁 Consulta cada 10 minutos la API oficial de AEMET
+- 🔁 Consulta cada hora la API oficial de AEMET
 - 📦 Procesa `.tar.gz` → `.xml` (CAP/XML) con decodificación ISO‑8859‑15
 - 🧠 Clasifica por subzonas: severidad, evento, fechas, fenómeno, área, comentarios
 - 🛡️ Política de verdad: solo datos oficiales, sin IA generativa, sin inventar
