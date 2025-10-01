@@ -1,8 +1,12 @@
 [build]
-  command = "npm run build"
   publish = "dist"
+  command = "npm run build"
 
-[[headers]]
-  for = "/data/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

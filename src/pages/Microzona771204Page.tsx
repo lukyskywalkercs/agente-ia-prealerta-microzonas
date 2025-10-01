@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Polygon, Circle, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import TarjetasFijasAlmassora from '../components/almassora/TarjetasFijasAlmassora';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -58,7 +59,7 @@ const Microzona771204Page: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold mb-2">Subzona 771204 · Análisis AEMET</h1>
+        <h1 className="text-2xl font-bold mb-2">📍 Microzona 771204 · Almassora</h1>
 
         {alerta?.generated_at && (
           <div className="mb-4 text-sm text-gray-600">
@@ -83,9 +84,16 @@ const Microzona771204Page: React.FC = () => {
           )}
 
           {!alerta?.activo && (
-            <p className="text-green-700 text-sm mt-2">
-              ⚠️ Confirmado por el agente IA: sin avisos naranja ni rojo válidos para esta subzona.
-            </p>
+            <>
+              <p className="text-green-700 text-sm mt-2">
+                ⚠️ Confirmado por el agente IA: sin avisos naranja ni rojo válidos para esta subzona.
+              </p>
+
+              {/* Mostrar tarjetas fijas siempre que NO haya alerta */}
+              <div className="mt-6">
+                <TarjetasFijasAlmassora />
+              </div>
+            </>
           )}
 
           {Array.isArray(alerta?.notas) && alerta.notas.length > 0 && (

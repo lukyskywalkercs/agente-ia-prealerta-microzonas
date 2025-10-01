@@ -6,16 +6,16 @@ import decompress from 'decompress';
 import dayjs from 'dayjs';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
-import { parseCapXml, type AvisoCAP } from './parseCapXml';
+import { parseCapXml, type AvisoCAP } from './parseCapXml.js';
+import { runMicrozonificador } from '../agents/almassora/microzonificador'; // ⬅️ nuevo
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Cargar .env.local de forma compatible en ESM usando require() para evitar problemas de tipos
 const require = createRequire(import.meta.url);
 const dotenv = require('dotenv');
 dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
-// Config
 const API_KEY = process.env.AEMET_API_KEY;
 const AREA_CODES = ['77', '69'];
 const TMP_DIR = path.join(__dirname, '..', 'tmp');
@@ -36,7 +36,6 @@ function limpiarTmp() {
   log('🧹 Limpieza completada: tmp/');
 }
 
-// Buscar .xml recursivamente (en subcarpetas y .XML/.Xml)
 function listarXmlRecursivo(dir: string): string[] {
   const out: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -57,7 +56,6 @@ async function descargarYProcesarArea(area: string): Promise<AvisoCAP[]> {
       return [];
     }
 
-    // Descarga el recurso 'datos'
     const resp = await axios.get(downloadUrl, { responseType: 'arraybuffer', validateStatus: () => true });
     if (resp.status >= 400) {
       log(`❌ Zona ${area}: descarga datos HTTP ${resp.status}`);
@@ -72,23 +70,19 @@ async function descargarYProcesarArea(area: string): Promise<AvisoCAP[]> {
     const avisos: AvisoCAP[] = [];
 
     if (contentType.includes('xml') || downloadUrl.toLowerCase().endsWith('.xml')) {
-      // Es XML directo
       const xmlPath = path.join(areaDir, `avisos_${area}.xml`);
       fs.writeFileSync(xmlPath, resp.data);
       const parsed = await parseCapXml(xmlPath);
       avisos.push(...parsed);
     } else {
-      // Asumimos tar/zip → guardamos y descomprimimos
       const archivePath = path.join(areaDir, `avisos_${area}`);
-      // intenta deducir extensión
       const ext = contentType.includes('zip') ? '.zip'
-               : contentType.includes('gzip') || contentType.includes('tar') ? '.tar.gz'
-               : '.bin';
+                 : contentType.includes('gzip') || contentType.includes('tar') ? '.tar.gz'
+                 : '.bin';
       const fullArchive = archivePath + ext;
       fs.writeFileSync(fullArchive, resp.data);
 
       await decompress(fullArchive, areaDir);
-
       const xmls = listarXmlRecursivo(areaDir);
       for (const xp of xmls) {
         const parsed = await parseCapXml(xp);
@@ -130,10 +124,12 @@ export async function runOnce() {
   }
 
   guardarJSON(all);
+
+  await runMicrozonificador(); // ⬅️ ¡ahora sí!
+
   ejecutarRiskEvaluator();
 }
 
-// Ejecuta una vez si el archivo se invoca directamente (no como módulo)
 if (process.argv[1] && process.argv[1].endsWith('cron-aemet.ts')) {
   runOnce().catch((e) => {
     console.error(e);
