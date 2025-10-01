@@ -8,7 +8,10 @@ export default defineConfig({
     react(),
     viteStaticCopy({
       targets: [
-        { src: 'public/data/*.json', dest: 'data' }
+        {
+          src: 'public/data/*.json',
+          dest: 'data'  // Esto copiará a dist/data/
+        }
       ]
     })
   ],
