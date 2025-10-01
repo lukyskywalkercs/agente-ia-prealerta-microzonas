@@ -1,124 +1,94 @@
-# 🌪️ Agente IA AEMET · Sistema de Avisos Meteorológicos y Microzonas Inteligentes
+# 🌧️ Agente IA de Prealerta Meteorológica — Atención específica: Microzona 771204 (Almassora)
 
-> ⚠️ **ESTE NO ES UN SISTEMA OFICIAL**
-> 🚫 **NO USAR EN EMERGENCIAS REALES**
-> 🧪 Proyecto técnico desarrollado por **Lucas Chabrera Querol** ([@lukyskywalkercs](https://github.com/lukyskywalkercs))
+Sistema inteligente de vigilancia meteorológica conectado en tiempo real a los avisos oficiales de AEMET (formato CAP), que detecta, filtra y muestra los riesgos meteorológicos activos para la provincia de Castelló con seguimiento específico a la microzona 771204 (Almassora), basada en datos oficiales, sin simulaciones ni datos inventados.
 
 ---
 
-## 🧠 ¿Qué es este sistema?
+## ⚙️ Arquitectura del sistema
 
-Este repositorio contiene una plataforma completa para procesar, analizar y visualizar **avisos meteorológicos reales** de AEMET, incluyendo:
-
-- Un **agente IA lector de avisos AEMET** que descarga y analiza datos oficiales en formato CAP/XML.
-- Un **agente IA microzonificador** específico para la subzona 771204 (Almassora), que detecta avisos críticos y lanza prealertas a infraestructuras vulnerables.
-- Una interfaz visual avanzada para interpretar los riesgos por zona.
-
-> Este proyecto NO es oficial. Se ofrece como demostración técnica de un sistema escalable de agentes IA para gestión de emergencias.
-
----
-
-## 🎯 Objetivo
-
-- Automatizar la descarga y análisis de avisos de AEMET (zona 77 y 69)
-- Clasificar por subzona los niveles reales (verde/amarillo/naranja/rojo)
-- Evaluar el riesgo de forma automática por zona (`NORMALIDAD`, `MEDIA`, `CRÍTICA`)
-- Detectar avisos activos en microzonas como **Almassora**
-- Avisar a **centros vulnerables** según criterios legales
-- Mostrar todo en una **interfaz elegante, clara y auditable**
+- **Frontend:** React + Vite
+- **Backend:** Functions serverless en Netlify (`cronAemet`, `cronAlmassora`)
+- **Procesamiento de datos:**
+  - Descarga real del XML CAP desde AEMET (área 77)
+  - Parser CAP XML → `agent_ui.json`
+  - Microzonificador por subzona → `alerta_almassora.json`
+- **Datos oficiales:** AEMET OpenData (avisos meteorológicos CAP)
+- **Panel informativo:** Muestra tarjetas estáticas (normativa, centros críticos, caminos, etc.) incluso si no hay avisos
 
 ---
 
-## ✅ Características del agente AEMET
+## 🚀 ¿Cómo se activa el sistema?
 
-- 🔁 Consulta cada hora la API oficial de AEMET
-- 📦 Procesa `.tar.gz` → `.xml` (CAP/XML) con decodificación ISO‑8859‑15
-- 🧠 Clasifica por subzonas: severidad, evento, fechas, fenómeno, área, comentarios
-- 🛡️ Política de verdad: solo datos oficiales, sin IA generativa, sin inventar
-- 🧾 Auditoría completa (`aemet_meta.json`, `agent_ui.json`)
-- 💾 Memoria por subzona (`state.json`) con cooldown
-- 🧮 Severidad consolidada por clave `subzona|evento|inicio|fin`
-- 📍 Detección de zonas con avisos y actualizaciones
-- 💡 Interfaz UI con colores por nivel y trazabilidad
+El sistema **no requiere intervención manual**.
 
----
+- Cada vez que alguien entra en la web, se ejecuta el cron automáticamente (`/.netlify/functions/cronAemet`)
+- Se descargan los datos reales de AEMET
+- Se procesan y se actualizan los ficheros visibles por el frontend:
+  - `public/data/agent_ui.json` (avisos generales)
+  - `public/data/alerta_almassora.json` (filtrado microzona 771204)
 
-## 📍 Microzonas: agente IA de Almassora
-
-> Subzona AEMET 771204
-
-Este subagente especializado analiza si existe un aviso **naranja o rojo** en la subzona de Almassora y:
-
-- Busca centros vulnerables (colegios, residencias) cercanos a zonas inundables oficiales (PATRICOVA)
-- Calcula distancias reales a cauces y zonas de riesgo
-- Genera recomendaciones automáticas y específicas
-- Crea un JSON de prealerta (`alerta_almassora.json`)
-- Lo representa en un mapa Leaflet con capas técnicas
+Si la clave de AEMET caduca o la API no responde, se muestra un aviso de error automático en toda la web.
 
 ---
 
-## 🖥️ Interfaz web
+## 📁 Estructura relevante
 
-- **React + TailwindCSS** con diseño inspirado en la NASA
-- Visualización de zonas con avisos por severidad
-- Página especial `/almassora` con evaluación microzonificada
-- Página `/sobre` con explicación del sistema, su IA y su autor
-- Tabs tipo scrollspy, accesibles y exportables
+- public/data/*.json ← generado automáticamente
+- src/components/AemetStatusBanner.tsx ← banner global
+- src/components/AvisoAlmassora.tsx ← visor de microzona
+- backend/cron-aemet.ts ← descarga y parseo
+- agents/almassora/microzonificador.ts ← filtra subzona
+- netlify/functions/cronAemet.ts ← activa desde tráfico
+- vite.config.ts ← copia automática de los JSON
 
----
+## 🛠 Instalación local (desarrollo)
 
-## 🧱 Tecnologías utilizadas
+git clone https://github.com/tu_usuario/agente-ia-prealerta-microzonas.git
+cd agente-ia-prealerta-microzonas
+npm install
+npm run dev
+Abre en http://localhost:5173
 
-- **Frontend**: React + TypeScript + TailwindCSS + Vite
-- **Backend**: Node.js + tsx + cron + axios + fast-xml-parser
-- **Datos**: OpenData AEMET (https://opendata.aemet.es/)
-- **Formatos**: XML CAP + JSON
+🧱 Build para producción
 
----
+npm run build
+Este comando:
 
-## 📂 Estructura del proyecto
+Genera el frontend en dist/
 
-```
-/backend/cron-aemet.ts              → descarga y descomprime los avisos CAP/XML oficiales
-/backend/parseCapXml.ts             → parser real del formato CAP
-/public/data/agent_ui.json          → interfaz del agente principal (avisos por zona)
-/public/data/alerta_almassora.json  → resultado microzonificado (subzona 771204)
-/src/pages/AlmassoraPage.tsx        → interfaz microzonificada
-/src/pages/Sobre.tsx                → documentación visual del sistema y su IA
-/scripts/geocode_simple.ts          → geolocaliza centros a partir de CSV
-/agents/almassora/microzonificador.ts → lógica del agente IA microzonificado
-```
+Copia automáticamente los JSON desde public/data/ a dist/data/ gracias a vite-plugin-static-copy
 
----
+☁️ Despliegue en Netlify
 
-## 🚫 ¿Qué NO es este proyecto?
+Conectado al repositorio GitHub
 
-- No es un sistema oficial
-- No usa IA generativa para evaluar riesgos
-- No está certificado por Protección Civil ni AEMET
-- No debe usarse para tomar decisiones reales
+Build command: npm run build
 
----
+Publish directory: dist
 
-## 🧠 ¿Por qué se considera agente IA?
+Functions directory: netlify/functions
 
-- Toma decisiones automáticas basadas en condiciones reales
-- Tiene memoria, lógica de actualización, deduplicación y evaluación
-- Puede interoperar con otros agentes (sismos, incendios, salud pública)
-- Su diseño sigue la arquitectura de agentes autónomos escalables
+Variable de entorno necesaria:
 
----
+AEMET_API_KEY=TU_CLAVE_REAL
+Netlify detectará cada git push y hará el deploy automático.
 
-## 📤 Contacto del autor
+✅ Comprobación en producción
+Asegúrate de que estas URLs devuelven JSON y no HTML:
 
-Desarrollado por: **Lucas Chabrera Querol**  
-📧 lucas@lindinformatica.com  
-🌐 [www.lindinformatica.com](https://www.lindinformatica.com)  
-🐙 GitHub: [@lukyskywalkercs](https://github.com/lukyskywalkercs)
+https://tusitio.netlify.app/data/agent_ui.json
+https://tusitio.netlify.app/data/alerta_almassora.json
 
----
+🚨 Advertencias
+El sistema no sustituye a los canales oficiales de AEMET, Protección Civil ni 112.
 
-## 📖 Licencia
+No se muestran datos si no hay avisos activos.
 
-MIT © Lucas Chabrera Querol  
-Distribuido solo con fines educativos. No usar en emergencias reales.
+Todos los datos mostrados son reales, procesados automáticamente desde CAP XML oficial.
+
+📄 Licencia
+Este proyecto es de uso libre bajo licencia MIT, siempre que se respete el origen oficial de los datos (AEMET) y no se utilicen los avisos para decisiones críticas sin validación oficial.
+
+✉️ Contacto
+Autor: Lucas Chabrera Querol - lucas@lindinformatica.com - www.lindinformatica.com
+Proyecto piloto de microzonificación meteorológica en Castellón — 2025
