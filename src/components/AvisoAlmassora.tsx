@@ -1,4 +1,3 @@
-// src/components/AvisoAlmassora.tsx
 import React, { useEffect, useState } from 'react';
 import TarjetasFijasAlmassora from './almassora/TarjetasFijasAlmassora';
 
@@ -17,32 +16,40 @@ interface AlertaAlmassora {
 const AvisoAlmassora: React.FC = () => {
   const [alerta, setAlerta] = useState<AlertaAlmassora | null>(null);
   const [fechaConsulta, setFechaConsulta] = useState<string>("");
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     const cargar = async () => {
       try {
         const res = await fetch('/data/alerta_almassora.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const contentType = res.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+          throw new Error('El archivo recibido no es JSON');
+        }
+
         const data = await res.json();
+
         if (data && typeof data === 'object' && !Array.isArray(data)) {
           setAlerta(data as AlertaAlmassora);
         } else {
-          setAlerta({
-            activo: false,
-            subzona: '771204',
-            vigencia: { inicio: '', fin: '' },
-          });
+          throw new Error('Contenido JSON inválido');
         }
-      } catch {
+      } catch (err: any) {
+        console.warn('⚠️ Error cargando alerta Almassora:', err.message);
+        setErrorCarga(err.message);
         setAlerta({
           activo: false,
           subzona: '771204',
           vigencia: { inicio: '', fin: '' },
+          notas: ['No se pudo cargar el estado de la alerta. Intente más tarde.']
         });
       } finally {
         setFechaConsulta(new Date().toLocaleString('es-ES'));
       }
     };
+
     cargar();
   }, []);
 
@@ -76,6 +83,12 @@ const AvisoAlmassora: React.FC = () => {
 
       {fechaConsulta && (
         <p className="text-sm text-gray-600 mb-4">Última consulta: {fechaConsulta}</p>
+      )}
+
+      {errorCarga && (
+        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-2 mb-4 text-sm rounded">
+          ⚠️ Error cargando datos: {errorCarga}
+        </div>
       )}
 
       {alerta?.activo ? (
