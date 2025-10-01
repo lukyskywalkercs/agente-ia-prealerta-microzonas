@@ -1,24 +1,34 @@
-# Dependencies
+# 🧱 Node.js
 node_modules/
-
-# Logs
-logs/
-*.log
+.env
+.env.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build output
+# 🧪 Test coverage
+coverage/
+
+# ⚙️ Vite / React
 dist/
+*.local
+*.cache
 
-# Local env
-.env.local
-.env*
+# 🔁 VSCode / IDEs
+.vscode/
+.idea/
+*.sw?
 
-# Temporary
-.tmp/
-.DS_Store
-Thumbs.db
+# 📦 Netlify
+.netlify/
+netlify/functions/*.js
+netlify/functions/*.map
 
-# Local Netlify folder
-.netlify
+# 🗃️ Builds temporales
+tmp/
+*.log
+*.tsbuildinfo
+
+# 🧪 Output generado por cron o microzonificador
+public/data/agent_ui.json
+public/data/alerta_almassora.json
