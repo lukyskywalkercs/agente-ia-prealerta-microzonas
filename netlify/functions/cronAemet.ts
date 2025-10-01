@@ -29,7 +29,7 @@ export const handler: Handler = async () => {
         'User-Agent': 'Mozilla/5.0',
         'Accept': 'application/json'
       },
-      timeout: 10000
+      timeout: 20000
     })
 
     diag.push({
