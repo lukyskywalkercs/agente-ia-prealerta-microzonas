@@ -1,4 +1,3 @@
-// netlify/functions/cronAemet.ts
 import { Handler } from '@netlify/functions'
 import axios from 'axios'
 import decompress from 'decompress'
@@ -9,39 +8,62 @@ import { parseStringPromise } from 'xml2js'
 
 export const handler: Handler = async () => {
   const API_KEY = process.env.AEMET_API_KEY || ''
-  if (!API_KEY) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: true, message: 'Falta AEMET_API_KEY' }),
-    }
-  }
-
   const hoy = new Date().toISOString().split('T')[0]
   const area = '77'
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aemet-'))
 
+  if (!API_KEY) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: true, message: '❌ FALTA AEMET_API_KEY' }),
+    }
+  }
+
   try {
     const metaUrl = `https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/${hoy}/fechafin/${hoy}/area/${area}?api_key=${API_KEY}`
-    const { data: meta } = await axios.get(metaUrl, { timeout: 20000 })
-    if (!meta?.datos) throw new Error('No se encontró el enlace de datos de AEMET')
 
-    const { data: raw } = await axios.get(meta.datos, { responseType: 'arraybuffer', timeout: 30000 })
+    const { data: meta } = await axios.get(metaUrl, {
+      timeout: 20000,
+      headers: {
+        'User-Agent': 'NetlifyServerless/1.0',
+        'Accept': 'application/json',
+      },
+    })
+
+    if (!meta?.datos) {
+      throw new Error('AEMET no ha devuelto el campo "datos". Posible API rota.')
+    }
+
+    const { data: raw } = await axios.get(meta.datos, {
+      responseType: 'arraybuffer',
+      timeout: 30000,
+      headers: {
+        'User-Agent': 'NetlifyServerless/1.0',
+        'Accept': '*/*',
+      },
+    })
+
     const tarPath = path.join(tmpDir, 'avisos.tar.gz')
     fs.writeFileSync(tarPath, raw)
 
     const files = await decompress(tarPath, tmpDir)
-    const xmlFile = files.find((f) => f.path.endsWith('.xml'))
-    if (!xmlFile) throw new Error('No se encontró el XML dentro del .tar.gz')
+    const xmlFile = files.find(f => f.path.endsWith('.xml'))
+    if (!xmlFile) throw new Error('No se encontró XML en el .tar.gz de AEMET')
 
     const xmlPath = path.join(tmpDir, xmlFile.path)
     const xmlContent = fs.readFileSync(xmlPath, 'utf8')
-    const parsed = await parseStringPromise(xmlContent, { explicitArray: false })
 
+    // Si AEMET devuelve HTML por error
+    if (xmlContent.startsWith('<!DOCTYPE html') || xmlContent.includes('<html')) {
+      throw new Error('AEMET devolvió HTML en vez de XML. Posible error interno o acceso denegado.')
+    }
+
+    const parsed = await parseStringPromise(xmlContent, { explicitArray: false })
     const alerts = Array.isArray(parsed.alerts?.alert)
       ? parsed.alerts.alert
       : parsed.alerts?.alert
-      ? [parsed.alerts.alert]
-      : []
+        ? [parsed.alerts.alert]
+        : []
 
     const avisos = alerts.flatMap((alert) => {
       const info = alert.info
@@ -59,6 +81,7 @@ export const handler: Handler = async () => {
       })
     })
 
+    // Microzonificador in-line para subzona 771204
     const alerta_almassora = (() => {
       const subzona = '771204'
       const ahora = new Date().toISOString()
@@ -75,7 +98,7 @@ export const handler: Handler = async () => {
           zonas_riesgo_intersectadas: [],
           fuente: 'AEMET / Agente IA',
           generated_at: ahora,
-          notas: ['No hay avisos meteorológicos activos para esta subzona en el momento de la última descarga.'],
+          notas: ['No hay avisos meteorológicos activos para esta subzona.'],
         }
       }
 
@@ -112,7 +135,10 @@ export const handler: Handler = async () => {
   } catch (err: any) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: true, message: err.message || 'Fallo inesperado en cronAemet' }),
+      body: JSON.stringify({
+        error: true,
+        message: err.message || 'Fallo inesperado',
+      }),
     }
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true })

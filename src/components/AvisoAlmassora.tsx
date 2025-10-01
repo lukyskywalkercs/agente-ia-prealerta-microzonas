@@ -11,45 +11,41 @@ interface AlertaAlmassora {
   descripcion?: string;
   vigencia: Vigencia;
   notas?: string[];
+  generated_at?: string;
 }
 
 const AvisoAlmassora: React.FC = () => {
   const [alerta, setAlerta] = useState<AlertaAlmassora | null>(null);
   const [fechaConsulta, setFechaConsulta] = useState<string>("");
-  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     const cargar = async () => {
       try {
-        const res = await fetch('/data/alerta_almassora.json', { cache: 'no-store' });
+        const res = await fetch('/.netlify/functions/cronAemet', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const contentType = res.headers.get('content-type');
-        if (!contentType?.includes('application/json')) {
-          throw new Error('El archivo recibido no es JSON');
-        }
-
         const data = await res.json();
 
-        if (data && typeof data === 'object' && !Array.isArray(data)) {
-          setAlerta(data as AlertaAlmassora);
+        if (data?.alerta_almassora) {
+          setAlerta(data.alerta_almassora as AlertaAlmassora);
         } else {
-          throw new Error('Contenido JSON inválido');
+          setAlerta({
+            activo: false,
+            subzona: '771204',
+            vigencia: { inicio: '', fin: '' },
+            notas: ['No se recibió información de alerta para esta microzona.']
+          });
         }
-      } catch (err: any) {
-        console.warn('⚠️ Error cargando alerta Almassora:', err.message);
-        setErrorCarga(err.message);
+      } catch {
         setAlerta({
           activo: false,
           subzona: '771204',
           vigencia: { inicio: '', fin: '' },
-          notas: ['No se pudo cargar el estado de la alerta. Intente más tarde.']
+          notas: ['Error al consultar el servicio de avisos.']
         });
       } finally {
         setFechaConsulta(new Date().toLocaleString('es-ES'));
       }
     };
-
     cargar();
   }, []);
 
@@ -83,12 +79,6 @@ const AvisoAlmassora: React.FC = () => {
 
       {fechaConsulta && (
         <p className="text-sm text-gray-600 mb-4">Última consulta: {fechaConsulta}</p>
-      )}
-
-      {errorCarga && (
-        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-2 mb-4 text-sm rounded">
-          ⚠️ Error cargando datos: {errorCarga}
-        </div>
       )}
 
       {alerta?.activo ? (
