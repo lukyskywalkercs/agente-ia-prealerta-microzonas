@@ -2,95 +2,143 @@ import { Handler } from '@netlify/functions'
 import axios from 'axios'
 import decompress from 'decompress'
 import fs from 'fs'
-import path from 'path'
 import os from 'os'
+import path from 'path'
 import { parseStringPromise } from 'xml2js'
 
-export const handler: Handler = async () => {
-  const API_KEY = process.env.AEMET_API_KEY || ''
-  const hoy = new Date().toISOString().split('T')[0]
-  const area = '77'
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aemet-'))
+// Utilidades
+const yyyymmdd = (d: Date) => d.toISOString().split('T')[0]
+const AEMET_API_KEY = process.env.AEMET_API_KEY || ''
+const AREA = '77'
+const SUBZONA = '771204'
 
-  if (!API_KEY) {
+export const handler: Handler = async () => {
+  const now = new Date()
+  const hoy = yyyymmdd(now)
+  const ayer = yyyymmdd(new Date(now.getTime() - 86400000)) // 24h antes
+  const intentos = []
+
+  if (!AEMET_API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: true, message: '❌ FALTA AEMET_API_KEY' }),
+      body: JSON.stringify({ error: true, message: 'Falta AEMET_API_KEY' })
     }
   }
 
   try {
-    const metaUrl = `https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/${hoy}/fechafin/${hoy}/area/${area}?api_key=${API_KEY}`
+    // Intenta primero con la fecha de hoy, si no, prueba con la de ayer
+    const fechas = [hoy, ayer]
+    let datosUrl: string | null = null
+    let metaResponse: any = null
 
-    const { data: meta } = await axios.get(metaUrl, {
+    for (const fecha of fechas) {
+      const metaUrl = `https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/${fecha}/fechafin/${fecha}/area/${AREA}?api_key=${AEMET_API_KEY}`
+
+      try {
+        const r = await axios.get(metaUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; AemetAgent/1.0)',
+            'Accept': 'application/json'
+          },
+          timeout: 10000,
+          validateStatus: () => true
+        })
+
+        metaResponse = {
+          status: r.status,
+          contentType: r.headers['content-type'] || '',
+          sample: JSON.stringify(r.data).slice(0, 200),
+          url: metaUrl
+        }
+
+        intentos.push({ paso: `metadatos ${fecha}`, ...metaResponse })
+
+        if (r.status === 200 && r.data?.datos) {
+          datosUrl = r.data.datos
+          break
+        }
+      } catch (err: any) {
+        intentos.push({ paso: `metadatos ${fecha}`, error: err.message || 'fallo desconocido' })
+      }
+    }
+
+    if (!datosUrl) {
+      throw new Error('No se pudo obtener la URL de descarga desde AEMET')
+    }
+
+    // Descarga del .tar.gz
+    const descarga = await axios.get(datosUrl, {
+      responseType: 'arraybuffer',
       timeout: 20000,
       headers: {
-        'User-Agent': 'NetlifyServerless/1.0',
-        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; AemetAgent/1.0)',
+        'Accept': '*/*'
       },
+      validateStatus: () => true
     })
 
-    if (!meta?.datos) {
-      throw new Error('AEMET no ha devuelto el campo "datos". Posible API rota.')
+    intentos.push({
+      paso: 'descarga .tar.gz',
+      status: descarga.status,
+      contentType: descarga.headers['content-type'] || '',
+      bytes: descarga.data?.length || 0,
+      url: datosUrl
+    })
+
+    if (descarga.status !== 200 || !Buffer.isBuffer(descarga.data)) {
+      throw new Error('La descarga del archivo .tar.gz ha fallado o no es binaria')
     }
 
-    const { data: raw } = await axios.get(meta.datos, {
-      responseType: 'arraybuffer',
-      timeout: 30000,
-      headers: {
-        'User-Agent': 'NetlifyServerless/1.0',
-        'Accept': '*/*',
-      },
-    })
-
+    // Descomprime el tar
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aemet-'))
     const tarPath = path.join(tmpDir, 'avisos.tar.gz')
-    fs.writeFileSync(tarPath, raw)
+    fs.writeFileSync(tarPath, descarga.data)
 
     const files = await decompress(tarPath, tmpDir)
-    const xmlFile = files.find(f => f.path.endsWith('.xml'))
-    if (!xmlFile) throw new Error('No se encontró XML en el .tar.gz de AEMET')
+    const xmlEntry = files.find(f => f.path.endsWith('.xml'))
+    if (!xmlEntry) throw new Error('No se encontró ningún archivo XML en el tar.gz')
 
-    const xmlPath = path.join(tmpDir, xmlFile.path)
+    const xmlPath = path.join(tmpDir, xmlEntry.path)
     const xmlContent = fs.readFileSync(xmlPath, 'utf8')
 
-    // Si AEMET devuelve HTML por error
-    if (xmlContent.startsWith('<!DOCTYPE html') || xmlContent.includes('<html')) {
-      throw new Error('AEMET devolvió HTML en vez de XML. Posible error interno o acceso denegado.')
+    // Si devuelve HTML en lugar de XML
+    if (xmlContent.trim().startsWith('<!DOCTYPE html') || xmlContent.includes('<html')) {
+      throw new Error('AEMET devolvió HTML en lugar de XML')
     }
 
-    const parsed = await parseStringPromise(xmlContent, { explicitArray: false })
-    const alerts = Array.isArray(parsed.alerts?.alert)
-      ? parsed.alerts.alert
-      : parsed.alerts?.alert
-        ? [parsed.alerts.alert]
+    // Parseo XML CAP
+    const xml = await parseStringPromise(xmlContent, { explicitArray: false })
+    const alerts = Array.isArray(xml.alerts?.alert)
+      ? xml.alerts.alert
+      : xml.alerts?.alert
+        ? [xml.alerts.alert]
         : []
 
-    const avisos = alerts.flatMap((alert) => {
-      const info = alert.info
+    const avisos = alerts.flatMap((alert: any) => {
+      const info = alert?.info
+      if (!info) return []
       const areas = Array.isArray(info.area) ? info.area : [info.area]
-      return areas.map((area) => {
+      return areas.map((area: any) => {
         const geocodes = Array.isArray(area.geocode) ? area.geocode : [area.geocode]
-        const subzona = geocodes.find((g) => g.valueName === 'ID_ZONA')?.value || '000000'
+        const subzona = geocodes.find((g: any) => g?.valueName === 'ID_ZONA')?.value || '000000'
         return {
           subzona,
-          areaDesc: area.areaDesc || 'Desconocida',
-          fenomeno: info.event,
-          f_inicio: info.onset,
-          f_fin: info.expires,
+          areaDesc: area.areaDesc || '',
+          fenomeno: info.event || '',
+          f_inicio: info.onset || '',
+          f_fin: info.expires || ''
         }
       })
     })
 
-    // Microzonificador in-line para subzona 771204
-    const alerta_almassora = (() => {
-      const subzona = '771204'
-      const ahora = new Date().toISOString()
-      const filtrados = avisos.filter((a) => a.subzona === subzona)
+    // Microzonificador 771204
+    const ahora = new Date().toISOString()
+    const avisosAlmassora = avisos.filter(a => a.subzona === SUBZONA)
 
-      if (!filtrados.length) {
-        return {
+    const alerta_almassora = avisosAlmassora.length === 0
+      ? {
           activo: false,
-          subzona,
+          subzona: SUBZONA,
           vigencia: { inicio: '', fin: '' },
           fenomenos: [],
           centros_afectados: [],
@@ -98,49 +146,44 @@ export const handler: Handler = async () => {
           zonas_riesgo_intersectadas: [],
           fuente: 'AEMET / Agente IA',
           generated_at: ahora,
-          notas: ['No hay avisos meteorológicos activos para esta subzona.'],
+          notas: ['No hay avisos meteorológicos activos para esta subzona.']
         }
-      }
+      : {
+          activo: true,
+          subzona: SUBZONA,
+          vigencia: {
+            inicio: avisosAlmassora.map(a => a.f_inicio).sort()[0],
+            fin: avisosAlmassora.map(a => a.f_fin).sort().slice(-1)[0]
+          },
+          fenomenos: [...new Set(avisosAlmassora.map(a => a.fenomeno))],
+          centros_afectados: [],
+          caminos_afectados: [],
+          zonas_riesgo_intersectadas: [],
+          fuente: 'AEMET / Agente IA',
+          generated_at: ahora,
+          notas: ['Se han detectado avisos meteorológicos activos para esta subzona.']
+        }
 
-      const inicio = filtrados.map((a) => a.f_inicio).filter(Boolean).sort()[0] || ''
-      const fin = filtrados.map((a) => a.f_fin).filter(Boolean).sort().slice(-1)[0] || ''
-      const fenomenos = [...new Set(filtrados.map((a) => a.fenomeno))]
-
-      return {
-        activo: true,
-        subzona,
-        vigencia: { inicio, fin },
-        fenomenos,
-        centros_afectados: [],
-        caminos_afectados: [],
-        zonas_riesgo_intersectadas: [],
-        fuente: 'AEMET / Agente IA',
-        generated_at: ahora,
-        notas: [
-          'Se han detectado avisos meteorológicos activos para esta subzona.',
-          'Este agente IA no sustituye a los canales oficiales.',
-        ],
-      }
-    })()
-
+    // OK
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         agent_ui: avisos,
         alerta_almassora,
-        generated_at: new Date().toISOString(),
-      }),
+        generated_at: ahora
+      })
     }
+
   } catch (err: any) {
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: true,
-        message: err.message || 'Fallo inesperado',
-      }),
+        message: err?.message || 'Error desconocido',
+        diag: intentos
+      })
     }
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true })
   }
 }
