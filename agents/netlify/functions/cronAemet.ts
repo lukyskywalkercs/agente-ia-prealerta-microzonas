@@ -21,7 +21,7 @@ export const handler: Handler = async () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aemet-'));
 
   try {
-    const metaUrl = \`https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/\${hoy}/fechafin/\${hoy}/area/\${area}?api_key=\${API_KEY}\`;
+    const metaUrl = `https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/${hoy}/fechafin/${hoy}/area/${area}?api_key=${API_KEY}`;
     const { data: meta } = await axios.get(metaUrl, { timeout: 20000 });
     if (!meta?.datos) throw new Error('No se encontró enlace de datos en AEMET');
 
