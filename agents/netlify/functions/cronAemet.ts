@@ -5,67 +5,114 @@ import decompress from 'decompress';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { parseCapXml } from './_lib/parseCapXml';
-import { runMicrozonificador } from './_lib/microzonizador';
-
-const AEMET_API_KEY = process.env.AEMET_API_KEY || '';
+import { parseStringPromise } from 'xml2js';
 
 export const handler: Handler = async () => {
-  // Seguridad: sin API key no seguimos (modo absoluto)
-  if (!AEMET_API_KEY) {
+  const API_KEY = process.env.AEMET_API_KEY || '';
+  if (!API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: true, message: 'Falta AEMET_API_KEY en variables de entorno' })
+      body: JSON.stringify({ error: true, message: 'AEMET_API_KEY no configurada' })
     };
   }
 
-  const fechaHoy = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const hoy = new Date().toISOString().split('T')[0];
   const area = '77'; // Comunitat Valenciana
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aemet-'));
 
   try {
-    const url = `https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/${fechaHoy}/fechafin/${fechaHoy}/area/${area}?api_key=${AEMET_API_KEY}`;
-    const { data: resMeta } = await axios.get(url, { timeout: 20000 });
+    const metaUrl = \`https://opendata.aemet.es/opendata/api/avisos_cap/archivo/fechaini/\${hoy}/fechafin/\${hoy}/area/\${area}?api_key=\${API_KEY}\`;
+    const { data: meta } = await axios.get(metaUrl, { timeout: 20000 });
+    if (!meta?.datos) throw new Error('No se encontró enlace de datos en AEMET');
 
-    const datosUrl = resMeta?.datos;
-    if (!datosUrl) throw new Error('Enlace de descarga no disponible en respuesta AEMET');
-
-    const { data: rawData } = await axios.get(datosUrl, { responseType: 'arraybuffer', timeout: 30000 });
-
+    const { data: raw } = await axios.get(meta.datos, { responseType: 'arraybuffer', timeout: 30000 });
     const tarPath = path.join(tmpDir, 'avisos.tar.gz');
-    fs.writeFileSync(tarPath, rawData);
+    fs.writeFileSync(tarPath, raw);
 
     const files = await decompress(tarPath, tmpDir);
-    const xmlEntry = files.find(f => f.path.toLowerCase().endsWith('.xml'));
-    if (!xmlEntry) throw new Error('No se encontró archivo XML dentro del .tar.gz');
+    const xmlFile = files.find(f => f.path.endsWith('.xml'));
+    if (!xmlFile) throw new Error('No se encontró archivo XML dentro del .tar.gz');
 
-    const xmlPath = path.join(tmpDir, xmlEntry.path);
-    const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+    const xmlPath = path.join(tmpDir, xmlFile.path);
+    const xmlContent = fs.readFileSync(xmlPath, 'utf-8');
+    const parsed = await parseStringPromise(xmlContent, { explicitArray: false });
 
-    const avisos = await parseCapXml(xmlContent); // datos reales
-    const now = new Date().toISOString();
+    const alerts = Array.isArray(parsed.alerts?.alert)
+      ? parsed.alerts.alert
+      : parsed.alerts?.alert ? [parsed.alerts.alert] : [];
 
-    const alerta_almassora = runMicrozonificador(avisos);
+    const avisos = alerts.flatMap(alert => {
+      const info = alert.info;
+      const areas = Array.isArray(info.area) ? info.area : [info.area];
+      return areas.map(area => {
+        const geocodes = Array.isArray(area.geocode) ? area.geocode : [area.geocode];
+        const subzona = geocodes.find(g => g.valueName === 'ID_ZONA')?.value || '000000';
+        return {
+          subzona,
+          areaDesc: area.areaDesc || 'Desconocida',
+          fenomeno: info.event,
+          f_inicio: info.onset,
+          f_fin: info.expires
+        };
+      });
+    });
+
+    const alerta_almassora = (() => {
+      const subzona = '771204';
+      const ahora = new Date().toISOString();
+      const filtrados = avisos.filter(a => a.subzona === subzona);
+
+      if (!filtrados.length) {
+        return {
+          activo: false,
+          subzona,
+          vigencia: { inicio: '', fin: '' },
+          fenomenos: [],
+          centros_afectados: [],
+          caminos_afectados: [],
+          zonas_riesgo_intersectadas: [],
+          fuente: 'AEMET / Agente IA',
+          generated_at: ahora,
+          notas: ['No hay avisos meteorológicos activos para esta subzona en el momento de la última descarga.']
+        };
+      }
+
+      const inicio = filtrados.map(a => a.f_inicio).filter(Boolean).sort()[0] || '';
+      const fin = filtrados.map(a => a.f_fin).filter(Boolean).sort().slice(-1)[0] || '';
+      const fenomenos = [...new Set(filtrados.map(a => a.fenomeno))];
+
+      return {
+        activo: true,
+        subzona,
+        vigencia: { inicio, fin },
+        fenomenos,
+        centros_afectados: [],
+        caminos_afectados: [],
+        zonas_riesgo_intersectadas: [],
+        fuente: 'AEMET / Agente IA',
+        generated_at: ahora,
+        notas: [
+          'Se han detectado avisos meteorológicos activos para esta subzona.',
+          'Este agente IA no sustituye a los canales oficiales.'
+        ]
+      };
+    })();
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         agent_ui: avisos,
         alerta_almassora,
-        generated_at: now
+        generated_at: new Date().toISOString()
       })
     };
   } catch (err: any) {
-    const msg = err?.message ?? 'Error desconocido';
-    console.error('❌ cronAemet fallo:', msg);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ error: true, message: msg })
+      body: JSON.stringify({ error: true, message: err?.message || 'Error desconocido en cronAemet' })
     };
   } finally {
-    // Limpieza estricta de temporales
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 };
