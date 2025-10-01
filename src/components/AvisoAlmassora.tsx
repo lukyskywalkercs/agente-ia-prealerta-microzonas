@@ -1,62 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import TarjetasFijasAlmassora from './almassora/TarjetasFijasAlmassora';
+// src/components/AvisoAlmassora.tsx
+import React, { useEffect, useState } from 'react'
+import TarjetasFijasAlmassora from './almassora/TarjetasFijasAlmassora'
 
-type Vigencia = { inicio: string; fin: string };
+type Vigencia = { inicio: string; fin: string }
 
 interface AlertaAlmassora {
-  activo: boolean;
-  subzona: string;
-  nivel?: string;
-  fenomenos?: string[];
-  descripcion?: string;
-  vigencia: Vigencia;
-  notas?: string[];
-  generated_at?: string;
+  activo: boolean
+  subzona: string
+  nivel?: string
+  fenomenos?: string[]
+  descripcion?: string
+  vigencia: Vigencia
+  notas?: string[]
 }
 
 const AvisoAlmassora: React.FC = () => {
-  const [alerta, setAlerta] = useState<AlertaAlmassora | null>(null);
-  const [fechaConsulta, setFechaConsulta] = useState<string>("");
+  const [alerta, setAlerta] = useState<AlertaAlmassora | null>(null)
+  const [fechaConsulta, setFechaConsulta] = useState<string>('')
 
   useEffect(() => {
     const cargar = async () => {
       try {
-        const res = await fetch('/.netlify/functions/cronAemet', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        if (data?.alerta_almassora) {
-          setAlerta(data.alerta_almassora as AlertaAlmassora);
+        const res = await fetch('/data/alerta_almassora.json', { cache: 'no-store' })
+        const tipo = res.headers.get('content-type') || ''
+        if (!res.ok || !tipo.includes('application/json')) throw new Error('No JSON válido')
+        const data = await res.json()
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+          setAlerta(data as AlertaAlmassora)
         } else {
-          setAlerta({
-            activo: false,
-            subzona: '771204',
-            vigencia: { inicio: '', fin: '' },
-            notas: ['No se recibió información de alerta para esta microzona.']
-          });
+          setAlerta({ activo: false, subzona: '771204', vigencia: { inicio: '', fin: '' } })
         }
       } catch {
-        setAlerta({
-          activo: false,
-          subzona: '771204',
-          vigencia: { inicio: '', fin: '' },
-          notas: ['Error al consultar el servicio de avisos.']
-        });
+        setAlerta({ activo: false, subzona: '771204', vigencia: { inicio: '', fin: '' } })
       } finally {
-        setFechaConsulta(new Date().toLocaleString('es-ES'));
+        setFechaConsulta(new Date().toLocaleString('es-ES'))
       }
-    };
-    cargar();
-  }, []);
+    }
+    cargar()
+  }, [])
 
   const renderAlertaActiva = () => {
-    if (!alerta) return null;
-
+    if (!alerta) return null
     const color =
       alerta.nivel === 'rojo' ? '#e02424' :
       alerta.nivel === 'naranja' ? '#f97316' :
-      alerta.nivel === 'amarillo' ? '#eab308' :
-      '#2563eb';
+      alerta.nivel === 'amarillo' ? '#eab308' : '#2563eb'
 
     return (
       <div className="space-y-4">
@@ -70,20 +58,14 @@ const AvisoAlmassora: React.FC = () => {
           </div>
         ))}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto text-gray-900">
       <h1 className="text-2xl font-bold mb-4">Microzona 771204 — Almassora</h1>
-
-      {fechaConsulta && (
-        <p className="text-sm text-gray-600 mb-4">Última consulta: {fechaConsulta}</p>
-      )}
-
-      {alerta?.activo ? (
-        renderAlertaActiva()
-      ) : (
+      {fechaConsulta && <p className="text-sm text-gray-600 mb-4">Última consulta: {fechaConsulta}</p>}
+      {alerta?.activo ? renderAlertaActiva() : (
         <>
           <p className="text-green-700 font-medium mb-4">
             ✅ No hay avisos activos para esta microzona.
@@ -92,7 +74,7 @@ const AvisoAlmassora: React.FC = () => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AvisoAlmassora;
+export default AvisoAlmassora
