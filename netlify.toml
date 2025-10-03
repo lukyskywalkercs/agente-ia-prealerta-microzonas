@@ -1,19 +1,13 @@
 [build]
-  publish = "dist"
   command = "npm run build"
+  publish = "dist"
 
-# Si un JSON bajo /data no existe, devolver 404 real (no index.html)
 [[redirects]]
   from = "/data/*"
-  to = "/404.html"
-  status = 404
+  to = "/data/:splat"
+  status = 200
 
-# Fallback SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
