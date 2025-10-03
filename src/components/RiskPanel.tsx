@@ -1,108 +1,92 @@
-// src/components/RiskPanel.tsx
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-interface Evaluacion {
-  subzona: string
-  areaDesc: string
-  nivel_riesgo: 'BAJO' | 'MODERADO' | 'ALTO'
-  score_ia: number
-  fenomeno_principal: string
-  window?: { onsetSoonest?: string; expiresLatest?: string; imminenceHours?: number; durationHours?: number }
-  trend?: 'UP' | 'DOWN' | 'SAME' | 'NEW'
-  reasons?: string[]
-}
+type Evaluacion = {
+  subzona: string;
+  nivel: "ALTO" | "MODERADO" | "BAJO";
+  puntuacion: number;
+  fenomeno_principal: string;
+};
 
-const RiskPanel: React.FC = () => {
-  const [datos, setDatos] = useState<Evaluacion[]>([])
-  const [error, setError] = useState<string | null>(null)
+export default function RiskPanel() {
+  const [riesgos, setRiesgos] = useState<Evaluacion[]>([]);
+  const [status, setStatus] = useState<"CARGANDO" | "CON_RIESGO" | "SIN_RIESGO" | "ERROR_API">("CARGANDO");
 
   useEffect(() => {
-    const cargar = async () => {
+    const loadRiesgos = async () => {
       try {
-        const res = await fetch('/data/risk_eval.json', { cache: 'no-store' })
-        const tipo = res.headers.get('content-type') || ''
-        if (!res.ok || !tipo.includes('application/json')) {
-          throw new Error(`Respuesta inválida: ${res.status} (${tipo})`)
+        const res = await fetch("/data/risk_eval.json", {
+          headers: { "Cache-Control": "no-cache" },
+        });
+
+        const contentType = res.headers.get("Content-Type");
+        if (!res.ok || !contentType?.includes("application/json")) {
+          throw new Error(`Respuesta no válida: ${res.status}`);
         }
-        const data = await res.json()
-        setDatos(Array.isArray(data) ? data : [])
-      } catch (err: any) {
-        console.error('❌ Error cargando risk_eval.json:', err)
-        setError('⚠️ Error al cargar evaluación de riesgo IA.')
+
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Estructura de datos incorrecta");
+        }
+
+        if (data.length === 0) {
+          setStatus("SIN_RIESGO");
+        } else {
+          setRiesgos(data);
+          setStatus("CON_RIESGO");
+        }
+      } catch (err) {
+        console.error("❌ Error cargando evaluación de riesgo IA:", err);
+        setStatus("ERROR_API");
       }
-    }
-    cargar()
-  }, [])
+    };
 
-  const niveles = ['ALTO', 'MODERADO', 'BAJO'] as const
+    loadRiesgos();
+  }, []);
 
-  const getColor = (nivel: string) => {
-    switch (nivel) {
-      case 'ALTO': return 'border-red-600 bg-red-100'
-      case 'MODERADO': return 'border-yellow-500 bg-yellow-100'
-      default: return 'border-green-600 bg-green-100'
-    }
+  if (status === "CARGANDO") {
+    return <p className="text-sm text-gray-500">Cargando evaluación de riesgo IA...</p>;
   }
 
-  const toScale20 = (score: number) => Math.round(((score - 1) / 3) * 20)
+  if (status === "ERROR_API") {
+    return (
+      <div className="text-red-600 font-semibold bg-red-100 p-4 rounded-md border border-red-300">
+        ⚠️ No se ha podido obtener la evaluación de riesgo de la IA. 
+        <br />Compruebe la conexión o el estado de los datos.
+      </div>
+    );
+  }
 
-  const agrupar = niveles.map(nivel => ({
-    nivel,
-    zonas: datos.filter(d => d.nivel_riesgo === nivel).sort((a, b) => b.score_ia - a.score_ia)
-  }))
+  if (status === "SIN_RIESGO") {
+    return (
+      <div className="text-green-700 font-semibold bg-green-100 p-4 rounded-md border border-green-300">
+        ✅ Evaluación IA: No hay riesgo meteorológico relevante detectado.
+      </div>
+    );
+  }
 
+  // status === "CON_RIESGO"
   return (
-    <div className="p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4 text-blue-900">Agente IA Evaluador de Riesgo</h2>
-      <p className="text-sm text-gray-600 mb-6">
-        Esta herramienta analiza los avisos meteorológicos reales de AEMET y calcula un riesgo por subzona usando criterios como inminencia, duración y severidad.
-      </p>
-
-      {error && (
-        <p className="text-red-700 text-sm mb-4">{error}</p>
-      )}
-
-      {datos.length === 0 && !error && (
-        <p className="text-sm text-green-700">✅ No se han detectado riesgos relevantes.</p>
-      )}
-
-      {agrupar.map(grupo =>
-        grupo.zonas.length > 0 && (
-          <div key={grupo.nivel} className="mb-6">
-            <h3 className="text-md font-semibold mb-2">Riesgo {grupo.nivel}</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {grupo.zonas.map(z => (
-                <div key={z.subzona} className={`p-4 rounded border-l-4 shadow-sm ${getColor(grupo.nivel)}`}>
-                  <p className="font-bold text-gray-800">Subzona {z.subzona}</p>
-                  <p className="text-sm text-gray-700">{z.areaDesc}</p>
-                  <p className="text-sm font-medium mt-1">Fenómeno: {z.fenomeno_principal}</p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Score IA: {z.score_ia.toFixed(2)} · {toScale20(z.score_ia)}/20
-                    {z.trend === 'UP' && <span className="text-red-700 ml-2">↑</span>}
-                    {z.trend === 'DOWN' && <span className="text-green-700 ml-2">↓</span>}
-                    {z.trend === 'NEW' && <span className="text-yellow-700 ml-2">nuevo</span>}
-                  </p>
-                  {z.reasons && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {z.reasons.map((r, i) => (
-                        <span key={i} className="text-xs bg-black/5 text-gray-800 px-2 py-0.5 rounded-full">{r}</span>
-                      ))}
-                    </div>
-                  )}
-                  {z.window && (
-                    <p className="text-[11px] text-gray-500 mt-2">
-                      {z.window.onsetSoonest && <>Inicio: {new Date(z.window.onsetSoonest).toLocaleString()} · </>}
-                      {z.window.expiresLatest && <>Fin: {new Date(z.window.expiresLatest).toLocaleString()}</>}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )
-      )}
+    <div className="space-y-4">
+      {riesgos.map((r, index) => (
+        <div
+          key={index}
+          className={`p-4 rounded-md shadow border-l-4 ${
+            r.nivel === "ALTO"
+              ? "border-red-600 bg-red-100 text-red-800"
+              : r.nivel === "MODERADO"
+              ? "border-orange-500 bg-orange-100 text-orange-900"
+              : "border-green-500 bg-green-100 text-green-900"
+          }`}
+        >
+          <p className="font-semibold">Subzona {r.subzona}</p>
+          <p className="text-sm">
+            Riesgo: <strong>{r.nivel}</strong> · IA Score: {r.puntuacion.toFixed(2)}
+          </p>
+          <p className="text-sm">Causa principal: {r.fenomeno_principal || "—"}</p>
+          <p className="text-xs italic text-gray-500">* Evaluación generada automáticamente por IA (no oficial)</p>
+        </div>
+      ))}
     </div>
-  )
+  );
 }
-
-export default RiskPanel

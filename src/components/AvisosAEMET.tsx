@@ -1,66 +1,100 @@
-// src/components/AvisosAEMET.tsx
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-interface Aviso {
-  subzona: string
-  areaDesc: string
-  fenomeno: string
-  f_inicio: string
-  f_fin: string
-}
+type Aviso = {
+  subzona: string;
+  areaDesc: string;
+  fenomeno: string;
+  nivel: "amarillo" | "naranja" | "rojo";
+  nivel_num: "MEDIA" | "ALTA" | "CRÍTICA";
+  f_inicio: string;
+  f_fin: string;
+};
 
-const AvisosAEMET: React.FC = () => {
-  const [avisos, setAvisos] = useState<Aviso[]>([])
-  const [error, setError] = useState<string | null>(null)
+export default function AvisosAEMET() {
+  const [avisos, setAvisos] = useState<Aviso[]>([]);
+  const [status, setStatus] = useState<"CARGANDO" | "CON_AVISOS" | "SIN_AVISOS" | "ERROR_API">("CARGANDO");
 
   useEffect(() => {
-    const cargar = async () => {
+    const loadAvisos = async () => {
       try {
-        const res = await fetch('/data/agent_ui.json', { cache: 'no-store' })
-        const tipo = res.headers.get('content-type') || ''
-        if (!res.ok || !tipo.includes('application/json')) {
-          throw new Error(`Respuesta inválida: ${res.status} (${tipo})`)
+        const res = await fetch("/data/agent_ui.json", {
+          headers: { "Cache-Control": "no-cache" },
+        });
+
+        const contentType = res.headers.get("Content-Type");
+        if (!res.ok || !contentType?.includes("application/json")) {
+          throw new Error(`Respuesta no válida de la API: ${res.status} (${contentType})`);
         }
-        const data = await res.json()
-        setAvisos(Array.isArray(data) ? data : [])
-      } catch (err: any) {
-        console.error('❌ Error cargando avisos AEMET:', err)
-        setError('⚠️ Error al consultar datos oficiales de AEMET: No se pudo verificar el estado de los datos de AEMET.')
+
+        const data = await res.json();
+
+        if (!data || !Array.isArray(data.avisos)) {
+          throw new Error("Formato de datos inesperado o corrupto");
+        }
+
+        if (data.avisos.length === 0) {
+          setStatus("SIN_AVISOS");
+        } else {
+          setAvisos(data.avisos);
+          setStatus("CON_AVISOS");
+        }
+      } catch (err) {
+        console.error("❌ Error cargando avisos AEMET:", err);
+        setStatus("ERROR_API");
       }
-    }
-    cargar()
-  }, [])
+    };
 
-  const agrupar = avisos.reduce((acc, aviso) => {
-    if (!acc[aviso.subzona]) acc[aviso.subzona] = []
-    acc[aviso.subzona].push(aviso)
-    return acc
-  }, {} as Record<string, Aviso[]>)
+    loadAvisos();
+  }, []);
 
+  if (status === "CARGANDO") {
+    return <p className="text-sm text-gray-500">Cargando avisos meteorológicos...</p>;
+  }
+
+  if (status === "ERROR_API") {
+    return (
+      <div className="text-red-600 font-semibold bg-red-100 p-4 rounded-md border border-red-300">
+        ⚠️ No se ha podido conectar con la API oficial de AEMET o ha devuelto un error inesperado.
+        <br />
+        Por favor, vuelva a intentarlo más tarde.
+      </div>
+    );
+  }
+
+  if (status === "SIN_AVISOS") {
+    return (
+      <div className="text-green-700 font-semibold bg-green-100 p-4 rounded-md border border-green-300">
+        ✅ No hay avisos meteorológicos activos en estos momentos.
+      </div>
+    );
+  }
+
+  // status === "CON_AVISOS"
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Avisos AEMET por Subzona</h1>
-      {error && <p className="text-red-700 text-sm mb-4">{error}</p>}
-      {avisos.length === 0 && !error && (
-        <p className="text-green-700 text-sm">✅ No hay avisos activos ahora mismo.</p>
-      )}
-      {Object.entries(agrupar).map(([subzona, lista]) => (
-        <div key={subzona} className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Subzona {subzona}</h2>
-          <ul className="space-y-2">
-            {lista.map((aviso, i) => (
-              <li key={i} className="bg-white p-4 rounded border shadow-sm">
-                <p className="font-medium">{aviso.fenomeno}</p>
-                <p className="text-sm text-gray-600">
-                  {aviso.areaDesc} · Desde {aviso.f_inicio} hasta {aviso.f_fin}
-                </p>
-              </li>
-            ))}
-          </ul>
+    <div className="space-y-4">
+      {avisos.map((aviso, index) => (
+        <div
+          key={index}
+          className={`p-4 rounded-md shadow border-l-4 ${
+            aviso.nivel === "rojo"
+              ? "border-red-600 bg-red-100 text-red-800"
+              : aviso.nivel === "naranja"
+              ? "border-orange-500 bg-orange-100 text-orange-900"
+              : "border-yellow-500 bg-yellow-100 text-yellow-900"
+          }`}
+        >
+          <p className="font-semibold">
+            {aviso.areaDesc} — {aviso.fenomeno}
+          </p>
+          <p className="text-sm">
+            Nivel: <strong>{aviso.nivel.toUpperCase()}</strong> ({aviso.nivel_num})
+          </p>
+          <p className="text-sm">
+            Vigente: {new Date(aviso.f_inicio).toLocaleString()} →{" "}
+            {new Date(aviso.f_fin).toLocaleString()}
+          </p>
         </div>
       ))}
     </div>
-  )
+  );
 }
-
-export default AvisosAEMET

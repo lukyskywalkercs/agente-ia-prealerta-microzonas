@@ -1,105 +1,99 @@
-import dotenv from 'dotenv';
-import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
-import decompress from 'decompress';
-import { parseCapXml, Aviso, Nivel } from './parseCapXml';
+import fs from 'fs'
+import path from 'path'
+import axios from 'axios'
+import decompress from 'decompress'
+import { parseCapXml } from './parseCapXml'
+import { runMicrozonificador } from '../agents/almassora/microzonificador'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 
-dotenv.config({ path: '.env.local' });
+// ✅ ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-const AEMET_API_KEY = process.env.AEMET_API_KEY;
-const AREA = '77';
+const AREA = '77'
+const API_KEY = process.env.AEMET_API_KEY || ''
+const BASE_URL = `https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/${AREA}?api_key=${API_KEY}`
 
-const TMP_DIR = 'tmp';
-const OUT_DIR = 'public/data';
-const OUT_AGENT = path.join(OUT_DIR, 'agent_ui.json');
-const OUT_ALMASSORA = path.join(OUT_DIR, 'alerta_almassora.json');
+const TMP_DIR = path.join(__dirname, '..', 'tmp')
+const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'data')
+const LOG_PATH = path.join(__dirname, '..', 'logs', 'cron.log')
 
-function ensureDirs() {
-  if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
-  if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+function logError(msg: string) {
+  const line = `[${new Date().toISOString()}] ❌ ${msg}`
+  fs.appendFileSync(LOG_PATH, `${line}\n`)
+  console.error(line)
 }
 
-function nivelMax(niveles: Nivel[]): Nivel | undefined {
-  const order: Record<Nivel, number> = { '': 0, verde: 1, amarillo: 2, naranja: 3, rojo: 4 };
-  let best: Nivel | undefined = undefined;
-  let bestScore = -1;
-  for (const n of niveles) {
-    const sc = order[n] ?? 0;
-    if (sc > bestScore) { best = n; bestScore = sc; }
-  }
-  return best;
+function logOk(msg: string) {
+  const line = `[${new Date().toISOString()}] ✅ ${msg}`
+  fs.appendFileSync(LOG_PATH, `${line}\n`)
+  console.log(line)
 }
 
-async function run() {
-  if (!AEMET_API_KEY) {
-    console.error('❌ Falta AEMET_API_KEY');
-    return;
-  }
-
-  const metaUrl = `https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/${AREA}?api_key=${AEMET_API_KEY}`;
-  console.log('📡 URL AEMET:', metaUrl);
-
-  ensureDirs();
+async function main() {
+  console.log(`🚀 Inicio cron AEMET · ${new Date().toISOString()}`)
+  console.log(`📡 URL AEMET: ${BASE_URL}`)
 
   try {
-    // 1) Metadatos
-    const meta = await axios.get(metaUrl, { timeout: 15000 });
-    const datosUrl = meta.data?.datos;
-    if (!datosUrl) throw new Error('No se pudo obtener la URL de datos');
+    const response = await axios.get(BASE_URL, { timeout: 10000 })
+    const contentType = response.headers['content-type']
+    const raw = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
 
-    console.log('📥 Enlace datos:', datosUrl);
+    if (!contentType.includes('application/json') || raw.startsWith('<!DOCTYPE')) {
+      logError(`Respuesta HTML inválida desde AEMET · Estado ${response.status}`)
+      return
+    }
 
-    // 2) Descargar .tar.gz
-    const tarPath = path.join(TMP_DIR, 'aemet.tar.gz');
-    const bin = await axios.get(datosUrl, { responseType: 'arraybuffer', timeout: 20000 });
-    fs.writeFileSync(tarPath, bin.data);
-    console.log('📦 .tar.gz guardado');
+    if (!response.data || !response.data.datos) {
+      logError(`Respuesta sin campo 'datos' desde AEMET`)
+      return
+    }
 
-    // 3) Descomprimir y localizar XML
-    const files = await decompress(tarPath, TMP_DIR);
-    const xmlEntry = files.find(f => f.path.endsWith('.xml'));
-    if (!xmlEntry) throw new Error('No se encontró XML dentro del .tar.gz');
-    const xml = xmlEntry.data.toString('utf8');
-    console.log('📄 XML cargado, longitud:', xml.length);
+    const urlDatos = response.data.datos
+    const tarFileName = `avisos_${AREA}_${Date.now()}.tar.gz`
+    const tarPath = path.join(TMP_DIR, tarFileName)
 
-    // 4) Parsear y filtrar (ya excluye VERDE y no-ES)
-    const avisos: Aviso[] = await parseCapXml(xml);
+    const file = await axios.get(urlDatos, { responseType: 'arraybuffer' })
+    fs.mkdirSync(TMP_DIR, { recursive: true })
+    fs.writeFileSync(tarPath, file.data)
+    logOk(`.tar.gz descargado (${tarFileName})`)
 
-    // 5) Guardar agent_ui.json
-    const payload = { generated_at: new Date().toISOString(), avisos };
-    fs.writeFileSync(OUT_AGENT, JSON.stringify(payload, null, 2));
-    console.log(`✅ Generado ${OUT_AGENT} con ${avisos.length} avisos (sin VERDE)`);
+    const files = await decompress(tarPath, TMP_DIR)
+    const xmlFile = files.find(f => f.path.endsWith('.xml'))
 
-    // 6) Almassora 771204 (nivel máximo + ventana total + fenómenos)
-    const z = avisos.filter(a => a.subzona === '771204');
-    const nivelTop = nivelMax(z.map(a => a.nivel));
-    const vigIni = z.length ? z.map(a => a.f_inicio).filter(Boolean).sort()[0] : '';
-    const vigFin = z.length ? z.map(a => a.f_fin).filter(Boolean).sort().slice(-1)[0] : '';
+    if (!xmlFile) {
+      logError(`No se encontró archivo .xml en el .tar.gz`)
+      return
+    }
 
-    const alerta = {
-      activo: z.length > 0,
-      subzona: '771204',
-      nivel: nivelTop, // ← el frontend puede usar esto para color
-      vigencia: { inicio: vigIni || '', fin: vigFin || '' },
-      fenomenos: z.map(a => ({ descripcion: a.fenomeno, nivel: a.nivel, inicio: a.f_inicio, fin: a.f_fin })),
-      centros_afectados: [],
-      caminos_afectados: [],
-      zonas_riesgo_intersectadas: [],
-      fuente: 'AEMET / Agente IA',
-      generated_at: new Date().toISOString(),
-      notas: z.length
-        ? ['⚠️ Se han detectado avisos meteorológicos activos para esta subzona.']
-        : ['No hay avisos meteorológicos activos para esta subzona.']
-    };
+    const avisos = await parseCapXml(xmlFile.data.toString())
 
-    fs.writeFileSync(OUT_ALMASSORA, JSON.stringify(alerta, null, 2));
-    console.log(`✅ Generado ${OUT_ALMASSORA} (activo=${alerta.activo ? 'sí' : 'no'}, nivel=${alerta.nivel || '—'})`);
+    if (!Array.isArray(avisos)) {
+      logError(`Parser devolvió un tipo no válido`)
+      return
+    }
+
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true })
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'agent_ui.json'), JSON.stringify({ generated_at: new Date(), avisos }, null, 2))
+    logOk(`Generado public/data/agent_ui.json con ${avisos.length} avisos`)
+
+    const almassora = avisos.filter(a => a.subzona === '771204')
+    const micro = runMicrozonificador(almassora)
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'alerta_almassora.json'), JSON.stringify(micro, null, 2))
+    logOk(`Generado public/data/alerta_almassora.json (activo=${micro.activo}, nivel=${micro.nivel})`)
 
   } catch (err: any) {
-    console.error('❌ Error cron AEMET:', err?.message || err);
+    if (err.code === 'ECONNRESET') {
+      logError(`ECONNRESET · El servidor cerró la conexión`)
+    } else if (err.code === 'ETIMEDOUT') {
+      logError(`ETIMEDOUT · Timeout al conectar con AEMET`)
+    } else if (err.response?.status === 500) {
+      logError(`HTTP 500 · Error interno de AEMET`)
+    } else {
+      logError(`ERROR FATAL: ${err.message || err.toString()}`)
+    }
   }
 }
 
-// Ejecutar siempre en CLI
-run();
+main()
