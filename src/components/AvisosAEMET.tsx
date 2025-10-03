@@ -1,64 +1,63 @@
-// src/components/AvisosAEMET.tsx
-import React, { useEffect, useState } from 'react'
-import { fetchJsonStrict } from '../lib/fetchJsonStrict'
+import React, { useEffect, useState } from 'react';
+import { getAemetStatus } from '../lib/getAemetStatus';
 
 type Aviso = {
-  subzona: string
-  areaDesc: string
-  fenomeno?: string
-  nivel: 'amarillo' | 'naranja' | 'rojo'
-  nivel_num?: string
-  f_inicio?: string
-  f_fin?: string
-}
-type AgentUI = { generated_at: string; avisos: Aviso[] }
+  subzona: string;
+  areaDesc: string;
+  fenomeno: string;
+  nivel: string;
+  f_inicio: string;
+  f_fin: string;
+};
 
-const AvisosAEMET: React.FC = () => {
-  const [data, setData] = useState<AgentUI | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+export const AvisosAEMET: React.FC = () => {
+  const [avisos, setAvisos] = useState<Aviso[]>([]);
+  const [estado, setEstado] = useState<'ERROR_API' | 'SIN_AVISOS' | 'CON_AVISOS'>('SIN_AVISOS');
 
   useEffect(() => {
-    let alive = true
-    ;(async () => {
-      try {
-        const json = await fetchJsonStrict<AgentUI>('/data/agent_ui.json')
-        if (!alive) return
-        if (!json || !Array.isArray(json.avisos)) {
-          throw new Error('Estructura JSON inválida: falta "avisos" (array)')
-        }
-        setData(json)
-      } catch (e: any) {
-        setError(`⚠️ Error al consultar datos oficiales de AEMET: ${e?.message || e}`)
-      } finally {
-        setLoading(false)
-      }
-    })()
-    return () => { alive = false }
-  }, [])
+    getAemetStatus().then(setEstado);
+    fetch('/data/agent_ui.json')
+      .then((res) => res.json())
+      .then((data) => setAvisos(data.avisos || []))
+      .catch(() => setEstado('ERROR_API'));
+  }, []);
 
-  if (loading) return <p>🔄 Cargando avisos…</p>
-  if (error) return <p className="text-red-600">{error}</p>
-  if (!data) return null
+  if (estado === 'ERROR_API') {
+    return (
+      <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        ⚠️ No se ha podido conectar con la API oficial de AEMET o ha devuelto un error inesperado. Por favor, vuelva a intentarlo más tarde.
+      </div>
+    );
+  }
 
-  if (data.avisos.length === 0) {
-    return <p className="text-green-700">✅ No hay avisos meteorológicos activos actualmente.</p>
+  if (estado === 'SIN_AVISOS') {
+    return (
+      <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        ✅ No hay avisos meteorológicos activos publicados por AEMET.
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-xl font-bold">⚠️ Avisos meteorológicos activos</h2>
-      {data.avisos.map((a, i) => (
-        <div key={i} className="border rounded p-3 bg-yellow-50">
-          <p><strong>Zona:</strong> {a.areaDesc} ({a.subzona})</p>
-          {a.fenomeno && <p><strong>Fenómeno:</strong> {a.fenomeno}</p>}
-          <p><strong>Nivel:</strong> {a.nivel.toUpperCase()}</p>
-          {a.f_inicio && <p><strong>Inicio:</strong> {a.f_inicio}</p>}
-          {a.f_fin && <p><strong>Fin:</strong> {a.f_fin}</p>}
+    <div className="space-y-4">
+      {avisos.map((aviso, idx) => (
+        <div
+          key={idx}
+          className={`border-l-4 p-4 ${
+            aviso.nivel === 'rojo'
+              ? 'border-red-500 bg-red-50'
+              : aviso.nivel === 'naranja'
+              ? 'border-orange-400 bg-orange-50'
+              : 'border-yellow-300 bg-yellow-50'
+          }`}
+        >
+          <p className="font-bold">{aviso.areaDesc}</p>
+          <p>{aviso.fenomeno}</p>
+          <p className="text-sm text-gray-600">
+            Desde: {aviso.f_inicio} · Hasta: {aviso.f_fin}
+          </p>
         </div>
       ))}
     </div>
-  )
-}
-
-export default AvisosAEMET
+  );
+};

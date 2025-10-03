@@ -1,6 +1,6 @@
 // src/pages/AvisosPage.tsx
 import React from 'react'
-import AvisosAEMET from '../components/AvisosAEMET'
+import { AvisosAEMET } from '../components/AvisosAEMET'; // ✅
 
 const AvisosPage: React.FC = () => (
   <main className="p-4">

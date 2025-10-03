@@ -1,92 +1,76 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { getAemetStatus } from '../lib/getAemetStatus';
 
 type Evaluacion = {
   subzona: string;
-  nivel: "ALTO" | "MODERADO" | "BAJO";
+  nivel_riesgo: 'ALTO' | 'MODERADO' | 'BAJO';
   puntuacion: number;
-  fenomeno_principal: string;
+  fenomeno_principal?: string;
 };
 
-export default function RiskPanel() {
-  const [riesgos, setRiesgos] = useState<Evaluacion[]>([]);
-  const [status, setStatus] = useState<"CARGANDO" | "CON_RIESGO" | "SIN_RIESGO" | "ERROR_API">("CARGANDO");
+export const RiskPanel: React.FC = () => {
+  const [evaluaciones, setEvaluaciones] = useState<Evaluacion[]>([]);
+  const [estado, setEstado] = useState<'ERROR_API' | 'SIN_AVISOS' | 'CON_AVISOS'>('SIN_AVISOS');
 
   useEffect(() => {
-    const loadRiesgos = async () => {
-      try {
-        const res = await fetch("/data/risk_eval.json", {
-          headers: { "Cache-Control": "no-cache" },
-        });
-
-        const contentType = res.headers.get("Content-Type");
-        if (!res.ok || !contentType?.includes("application/json")) {
-          throw new Error(`Respuesta no válida: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          throw new Error("Estructura de datos incorrecta");
-        }
-
-        if (data.length === 0) {
-          setStatus("SIN_RIESGO");
-        } else {
-          setRiesgos(data);
-          setStatus("CON_RIESGO");
-        }
-      } catch (err) {
-        console.error("❌ Error cargando evaluación de riesgo IA:", err);
-        setStatus("ERROR_API");
-      }
-    };
-
-    loadRiesgos();
+    getAemetStatus().then(setEstado);
+    fetch('/data/risk_eval.json')
+      .then((res) => res.json())
+      .then(setEvaluaciones)
+      .catch(() => setEvaluaciones([]));
   }, []);
 
-  if (status === "CARGANDO") {
-    return <p className="text-sm text-gray-500">Cargando evaluación de riesgo IA...</p>;
-  }
-
-  if (status === "ERROR_API") {
+  if (estado === 'ERROR_API') {
     return (
-      <div className="text-red-600 font-semibold bg-red-100 p-4 rounded-md border border-red-300">
-        ⚠️ No se ha podido obtener la evaluación de riesgo de la IA. 
-        <br />Compruebe la conexión o el estado de los datos.
+      <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        ⚠️ Error al consultar datos oficiales de AEMET. No se puede evaluar el riesgo meteorológico.
       </div>
     );
   }
 
-  if (status === "SIN_RIESGO") {
+  if (evaluaciones.length === 0) {
     return (
-      <div className="text-green-700 font-semibold bg-green-100 p-4 rounded-md border border-green-300">
+      <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded">
         ✅ Evaluación IA: No hay riesgo meteorológico relevante detectado.
       </div>
     );
   }
 
-  // status === "CON_RIESGO"
+  const grupos = {
+    ALTO: evaluaciones.filter((e) => e.nivel_riesgo === 'ALTO'),
+    MODERADO: evaluaciones.filter((e) => e.nivel_riesgo === 'MODERADO'),
+    BAJO: evaluaciones.filter((e) => e.nivel_riesgo === 'BAJO'),
+  };
+
   return (
     <div className="space-y-4">
-      {riesgos.map((r, index) => (
-        <div
-          key={index}
-          className={`p-4 rounded-md shadow border-l-4 ${
-            r.nivel === "ALTO"
-              ? "border-red-600 bg-red-100 text-red-800"
-              : r.nivel === "MODERADO"
-              ? "border-orange-500 bg-orange-100 text-orange-900"
-              : "border-green-500 bg-green-100 text-green-900"
-          }`}
-        >
-          <p className="font-semibold">Subzona {r.subzona}</p>
-          <p className="text-sm">
-            Riesgo: <strong>{r.nivel}</strong> · IA Score: {r.puntuacion.toFixed(2)}
-          </p>
-          <p className="text-sm">Causa principal: {r.fenomeno_principal || "—"}</p>
-          <p className="text-xs italic text-gray-500">* Evaluación generada automáticamente por IA (no oficial)</p>
-        </div>
-      ))}
+      {(['ALTO', 'MODERADO', 'BAJO'] as const).map((nivel) =>
+        grupos[nivel].length > 0 ? (
+          <div key={nivel}>
+            <h3 className="font-bold text-lg mt-4">{nivel}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+              {grupos[nivel].map((evalItem) => (
+                <div
+                  key={evalItem.subzona}
+                  className={`border rounded p-3 shadow ${
+                    nivel === 'ALTO'
+                      ? 'border-red-500 bg-red-50'
+                      : nivel === 'MODERADO'
+                      ? 'border-yellow-500 bg-yellow-50'
+                      : 'border-green-500 bg-green-50'
+                  }`}
+                >
+                  <p className="text-sm font-semibold">Subzona: {evalItem.subzona}</p>
+                  <p className="text-sm">Puntuación IA: {evalItem.puntuacion}</p>
+                  {evalItem.fenomeno_principal && (
+                    <p className="text-sm italic">Fenómeno principal: {evalItem.fenomeno_principal}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null
+      )}
     </div>
   );
-}
+};
