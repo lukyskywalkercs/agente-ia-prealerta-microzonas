@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import RiskPanel from '../components/RiskPanel';
+import { RiskPanel } from '../components/RiskPanel'
 
 const RiesgoPage: React.FC = () => {
   const [now, setNow] = useState<string>(new Date().toLocaleString());
