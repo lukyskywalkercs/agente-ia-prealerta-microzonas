@@ -1,59 +1,64 @@
-import React, { useEffect, useState } from 'react';
+// src/components/AvisosAEMET.tsx
+import React, { useEffect, useState } from 'react'
+import { fetchJsonStrict } from '../lib/fetchJsonStrict'
 
 type Aviso = {
-  subzona: string;
-  areaDesc: string;
-  fenomeno: string;
-  nivel: 'amarillo' | 'naranja' | 'rojo';
-  nivel_num?: string;
-  f_inicio?: string;
-  f_fin?: string;
-};
+  subzona: string
+  areaDesc: string
+  fenomeno?: string
+  nivel: 'amarillo' | 'naranja' | 'rojo'
+  nivel_num?: string
+  f_inicio?: string
+  f_fin?: string
+}
+type AgentUI = { generated_at: string; avisos: Aviso[] }
 
-type AgentData = {
-  generated_at: string;
-  avisos: Aviso[];
-};
-
-export const AvisosAEMET: React.FC = () => {
-  const [data, setData] = useState<AgentData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const AvisosAEMET: React.FC = () => {
+  const [data, setData] = useState<AgentUI | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/data/agent_ui.json', { cache: 'no-store' })
-      .then(async (res) => {
-        if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
-          throw new Error(`Respuesta no válida de la API: ${res.status} (${res.headers.get('content-type')})`);
+    let alive = true
+    ;(async () => {
+      try {
+        const json = await fetchJsonStrict<AgentUI>('/data/agent_ui.json')
+        if (!alive) return
+        if (!json || !Array.isArray(json.avisos)) {
+          throw new Error('Estructura JSON inválida: falta "avisos" (array)')
         }
-        return res.json();
-      })
-      .then(setData)
-      .catch(() => setError('⚠️ Error al consultar datos oficiales de AEMET'));
-  }, []);
+        setData(json)
+      } catch (e: any) {
+        setError(`⚠️ Error al consultar datos oficiales de AEMET: ${e?.message || e}`)
+      } finally {
+        setLoading(false)
+      }
+    })()
+    return () => { alive = false }
+  }, [])
 
-  if (error) {
-    return <div className="text-red-600 text-sm">{error}</div>;
-  }
-
-  if (!data) {
-    return <p className="text-gray-500">Cargando avisos...</p>;
-  }
+  if (loading) return <p>🔄 Cargando avisos…</p>
+  if (error) return <p className="text-red-600">{error}</p>
+  if (!data) return null
 
   if (data.avisos.length === 0) {
-    return <p className="text-green-600">✅ No hay avisos meteorológicos activos para esta zona.</p>;
+    return <p className="text-green-700">✅ No hay avisos meteorológicos activos actualmente.</p>
   }
 
   return (
-    <div className="space-y-4">
-      {data.avisos.map((aviso, idx) => (
-        <div key={idx} className="p-4 border rounded shadow bg-white">
-          <p><strong>Zona:</strong> {aviso.areaDesc} ({aviso.subzona})</p>
-          <p><strong>Fenómeno:</strong> {aviso.fenomeno}</p>
-          <p><strong>Nivel:</strong> {aviso.nivel.toUpperCase()}</p>
-          <p><strong>Inicio:</strong> {aviso.f_inicio}</p>
-          <p><strong>Fin:</strong> {aviso.f_fin}</p>
+    <div className="space-y-3">
+      <h2 className="text-xl font-bold">⚠️ Avisos meteorológicos activos</h2>
+      {data.avisos.map((a, i) => (
+        <div key={i} className="border rounded p-3 bg-yellow-50">
+          <p><strong>Zona:</strong> {a.areaDesc} ({a.subzona})</p>
+          {a.fenomeno && <p><strong>Fenómeno:</strong> {a.fenomeno}</p>}
+          <p><strong>Nivel:</strong> {a.nivel.toUpperCase()}</p>
+          {a.f_inicio && <p><strong>Inicio:</strong> {a.f_inicio}</p>}
+          {a.f_fin && <p><strong>Fin:</strong> {a.f_fin}</p>}
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
+
+export default AvisosAEMET
