@@ -1,4 +1,3 @@
-// vite.config.ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
@@ -8,15 +7,9 @@ export default defineConfig({
     react(),
     viteStaticCopy({
       targets: [
-        {
-          src: 'public/data/*.json',
-          dest: 'data'  // Esto copiará a dist/data/
-        }
+        { src: 'public/data/agent_ui.json', dest: 'data' },
+        { src: 'public/data/alerta_almassora.json', dest: 'data' }
       ]
     })
-  ],
-  server: {
-    port: 5173,
-    host: true
-  }
+  ]
 })
