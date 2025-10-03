@@ -1,98 +1,135 @@
+import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
-import axios from 'axios'
 import decompress from 'decompress'
 import { parseCapXml } from './parseCapXml'
-import { runMicrozonificador } from '../agents/almassora/microzonificador'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import { Aviso, Nivel } from './types'
 
-// ✅ ESM-compatible __dirname
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const CWD = process.cwd()
+const TMP_DIR = path.join(CWD, 'tmp')
+const DATA_DIR = path.join(CWD, 'public', 'data')
+const LOG_DIR = path.join(CWD, 'logs')
 
-const AREA = '77'
-const API_KEY = process.env.AEMET_API_KEY || ''
-const BASE_URL = `https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/${AREA}?api_key=${API_KEY}`
-
-const TMP_DIR = path.join(__dirname, '..', 'tmp')
-const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'data')
-const LOG_PATH = path.join(__dirname, '..', 'logs', 'cron.log')
-
-function logError(msg: string) {
-  const line = `[${new Date().toISOString()}] ❌ ${msg}`
-  fs.appendFileSync(LOG_PATH, `${line}\n`)
-  console.error(line)
+for (const dir of [TMP_DIR, DATA_DIR, LOG_DIR]) {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
 }
 
-function logOk(msg: string) {
-  const line = `[${new Date().toISOString()}] ✅ ${msg}`
-  fs.appendFileSync(LOG_PATH, `${line}\n`)
-  console.log(line)
+const LOG_FILE = path.join(LOG_DIR, 'cron.log')
+const AREA = '77'
+const API_KEY = process.env.AEMET_API_KEY || ''
+const AEMET_URL = `https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/${AREA}?api_key=${API_KEY}`
+
+function logInfo(msg: string) {
+  const line = `[${new Date().toISOString()}] ✅ ${msg}\n`
+  fs.appendFileSync(LOG_FILE, line)
+  console.log(line.trim())
+}
+function logError(msg: string) {
+  const line = `[${new Date().toISOString()}] ❌ ${msg}\n`
+  fs.appendFileSync(LOG_FILE, line)
+  console.error(line.trim())
+}
+
+function writeJSONAtomic(filePath: string, obj: any) {
+  const tmp = `${filePath}.tmp`
+  fs.writeFileSync(tmp, JSON.stringify(obj, null, 2))
+  fs.renameSync(tmp, filePath)
+}
+
+function nivelMax(avisos: Aviso[]): Nivel {
+  const order: Record<Nivel, number> = { '—': 0, amarillo: 1, naranja: 2, rojo: 3 }
+  let max: Nivel = '—'
+  for (const a of avisos) {
+    if (a.nivel && order[a.nivel] > order[max]) max = a.nivel
+  }
+  return max
 }
 
 async function main() {
   console.log(`🚀 Inicio cron AEMET · ${new Date().toISOString()}`)
-  console.log(`📡 URL AEMET: ${BASE_URL}`)
+  console.log(`📡 URL AEMET: ${AEMET_URL}`)
 
   try {
-    const response = await axios.get(BASE_URL, { timeout: 10000 })
-    const contentType = response.headers['content-type']
-    const raw = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
+    const res = await axios.get(AEMET_URL, {
+      timeout: 15000,
+      headers: { Accept: 'application/json' },
+      validateStatus: () => true
+    })
 
-    if (!contentType.includes('application/json') || raw.startsWith('<!DOCTYPE')) {
-      logError(`Respuesta HTML inválida desde AEMET · Estado ${response.status}`)
+    const contentType = res.headers?.['content-type'] ?? ''
+    if (!contentType.includes('application/json')) {
+      logError(`Content-Type inválido (${contentType || 'desconocido'}) · AEMET devolvió contenido no JSON`)
       return
     }
 
-    if (!response.data || !response.data.datos) {
-      logError(`Respuesta sin campo 'datos' desde AEMET`)
+    const payload: any = res.data
+    if (typeof payload !== 'object' || payload == null) {
+      logError('Respuesta JSON inválida (no objeto)')
       return
     }
 
-    const urlDatos = response.data.datos
-    const tarFileName = `avisos_${AREA}_${Date.now()}.tar.gz`
-    const tarPath = path.join(TMP_DIR, tarFileName)
-
-    const file = await axios.get(urlDatos, { responseType: 'arraybuffer' })
-    fs.mkdirSync(TMP_DIR, { recursive: true })
-    fs.writeFileSync(tarPath, file.data)
-    logOk(`.tar.gz descargado (${tarFileName})`)
-
-    const files = await decompress(tarPath, TMP_DIR)
-    const xmlFile = files.find(f => f.path.endsWith('.xml'))
-
-    if (!xmlFile) {
-      logError(`No se encontró archivo .xml en el .tar.gz`)
+    if (res.status >= 500) {
+      logError(`HTTP ${res.status} · Error interno de AEMET`)
       return
     }
 
-    const avisos = await parseCapXml(xmlFile.data.toString())
-
-    if (!Array.isArray(avisos)) {
-      logError(`Parser devolvió un tipo no válido`)
+    if (payload.estado === 404) {
+      const agent = { generated_at: new Date().toISOString(), avisos: [] as Aviso[] }
+      writeJSONAtomic(path.join(DATA_DIR, 'agent_ui.json'), agent)
+      const alerta = { subzona: '771204', activo: false, nivel: '—' as Nivel }
+      writeJSONAtomic(path.join(DATA_DIR, 'alerta_almassora.json'), alerta)
+      logInfo(`Zona ${AREA} sin avisos (estado 404 de AEMET) · agent_ui.json con 0 avisos`)
       return
     }
 
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true })
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'agent_ui.json'), JSON.stringify({ generated_at: new Date(), avisos }, null, 2))
-    logOk(`Generado public/data/agent_ui.json con ${avisos.length} avisos`)
+    if (payload.estado !== 200 || !payload.datos) {
+      logError(`Respuesta inesperada de AEMET · estado=${payload.estado} · datos=${payload.datos ?? 'null'}`)
+      return
+    }
 
-    const almassora = avisos.filter(a => a.subzona === '771204')
-    const micro = runMicrozonificador(almassora)
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'alerta_almassora.json'), JSON.stringify(micro, null, 2))
-    logOk(`Generado public/data/alerta_almassora.json (activo=${micro.activo}, nivel=${micro.nivel})`)
+    const tarUrl: string = payload.datos
+    const tarResp = await axios.get<ArrayBuffer>(tarUrl, {
+      responseType: 'arraybuffer',
+      timeout: 20000,
+      headers: { Accept: '*/*' },
+      validateStatus: () => true
+    })
 
+    if (tarResp.status >= 400 || !tarResp.data) {
+      logError(`Fallo al descargar TAR · HTTP ${tarResp.status}`)
+      return
+    }
+
+    const buf = Buffer.from(tarResp.data)
+    const files = await decompress(buf)
+    const xml = files.find(f => f.path.toLowerCase().endsWith('.xml'))
+    if (!xml) {
+      logError('No se encontró XML dentro del .tar.gz')
+      return
+    }
+
+    const xmlText = xml.data.toString('utf8')
+    const avisos: Aviso[] = await parseCapXml(xmlText)
+
+    const agent = { generated_at: new Date().toISOString(), avisos }
+    writeJSONAtomic(path.join(DATA_DIR, 'agent_ui.json'), agent)
+    logInfo(`Generado agent_ui.json con ${avisos.length} avisos`)
+
+    const avisosAlmassora = avisos.filter(a => a.subzona === '771204')
+    const nivel = nivelMax(avisosAlmassora)
+    const alerta = { subzona: '771204', activo: nivel !== '—', nivel }
+    writeJSONAtomic(path.join(DATA_DIR, 'alerta_almassora.json'), alerta)
+    logInfo(`Generado alerta_almassora.json (activo=${alerta.activo}, nivel=${alerta.nivel})`)
   } catch (err: any) {
-    if (err.code === 'ECONNRESET') {
-      logError(`ECONNRESET · El servidor cerró la conexión`)
-    } else if (err.code === 'ETIMEDOUT') {
-      logError(`ETIMEDOUT · Timeout al conectar con AEMET`)
-    } else if (err.response?.status === 500) {
-      logError(`HTTP 500 · Error interno de AEMET`)
+    if (err?.code === 'ECONNRESET') {
+      logError('ECONNRESET · El servidor cerró la conexión')
+    } else if (err?.code === 'ETIMEDOUT') {
+      logError('ETIMEDOUT · Timeout al conectar con AEMET')
     } else {
-      logError(`ERROR FATAL: ${err.message || err.toString()}`)
+      logError(`ERROR FATAL: ${err?.message || String(err)}`)
     }
+  } finally {
+    try { fs.rmSync(TMP_DIR, { recursive: true, force: true }) } catch {}
   }
 }
 
