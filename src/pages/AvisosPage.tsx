@@ -1,14 +1,12 @@
 import React from 'react';
-import AvisosAEMET from '../components/AvisosAEMET';
+import { AvisosAEMET } from '../components/AvisosAEMET';
 
 const AvisosPage: React.FC = () => {
   return (
-    <div className="bg-white rounded shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">
-        Avisos oficiales de AEMET por subzona
-      </h2>
+    <main className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Avisos meteorológicos</h1>
       <AvisosAEMET />
-    </div>
+    </main>
   );
 };
 
